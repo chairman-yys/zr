@@ -133,7 +133,7 @@
         // ============================================================
         const SUPABASE_URL = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndocG16c2NhZmdpbG9hemRmamFzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODY5MTMwMjcsImV4cCI6MjEwMjQ4OTAyN30.q5JGYqmeMVI2ykQ7u4PzwtPotF6EpSzG5yocyJAOofQ';
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndocG16c2NhZmdpbG9hemRmamFzIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc4NjkxMzAyNywiZXhwIjoyMTAyNDg5MDI3fQ.GptXUyS_JplMXiGi1UyJRgWtsGAEsTx9zaJvXcYcYVk';
-        const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
         // ============================================================
         // 用户数据（硬编码测试）
@@ -178,13 +178,13 @@
         // 数据操作（Supabase）
         // ============================================================
         async function getProducts() {
-            const { data, error } = await supabase.from('products').select('*');
+            const { data, error } = await supabaseClient.from('products').select('*');
             if (error) { console.error(error); return []; }
             return data || [];
         }
 
         async function replaceProductsForSupplier(supplier, products) {
-            await supabase.from('products').delete().eq('supplier', supplier);
+            await supabaseClient.from('products').delete().eq('supplier', supplier);
             if (products.length === 0) return;
             const insert = products.map(p => ({
                 id: Date.now() + Math.random(),
@@ -193,11 +193,11 @@
                 full_name: p.fullName,
                 supplier: supplier
             }));
-            await supabase.from('products').insert(insert);
+            await supabaseClient.from('products').insert(insert);
         }
 
         async function getOrders() {
-            const { data, error } = await supabase.from('orders').select('*');
+            const { data, error } = await supabaseClient.from('orders').select('*');
             if (error) { console.error(error); return []; }
             return data || [];
         }
@@ -218,7 +218,7 @@
                 order_date: new Date().toISOString().slice(0, 10),
                 read: false
             };
-            const { error } = await supabase.from('orders').insert([newOrder]);
+            const { error } = await supabaseClient.from('orders').insert([newOrder]);
             if (error) throw error;
             return newOrder;
         }
@@ -246,7 +246,7 @@
         }
 
         async function markOrderRead(orderId) {
-            await supabase.from('orders').update({ read: true }).eq('id', orderId);
+            await supabaseClient.from('orders').update({ read: true }).eq('id', orderId);
         }
 
         async function getUnreadCount(supplier) {
