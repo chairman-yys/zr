@@ -133,8 +133,19 @@
         // ============================================================
         const SUPABASE_URL = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndocG16c2NhZmdpbG9hemRmamFzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODY5MTMwMjcsImV4cCI6MjEwMjQ4OTAyN30.q5JGYqmeMVI2ykQ7u4PzwtPotF6EpSzG5yocyJAOofQ';
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndocG16c2NhZmdpbG9hemRmamFzIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc4NjkxMzAyNywiZXhwIjoyMTAyNDg5MDI3fQ.GptXUyS_JplMXiGi1UyJRgWtsGAEsTx9zaJvXcYcYVk';
-        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        console.log('🔧 开始创建 Supabase 客户端...');
+console.log('URL:', SUPABASE_URL);
+console.log('Key:', SUPABASE_ANON_KEY);
+let sb;
+try {
+    sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    console.log('✅ 客户端创建成功:', sb);
+} catch (err) {
+    console.error('❌ 创建客户端失败:', err);
+}
+// 后续使用 sb 代替 supabaseClient;
 
+        
         // ============================================================
         // 用户数据（硬编码测试）
         // ============================================================
@@ -178,13 +189,13 @@
         // 数据操作（Supabase）
         // ============================================================
         async function getProducts() {
-            const { data, error } = await supabaseClient.from('products').select('*');
+            const { data, error } = await sb.from('products').select('*');
             if (error) { console.error(error); return []; }
             return data || [];
         }
 
         async function replaceProductsForSupplier(supplier, products) {
-            await supabaseClient.from('products').delete().eq('supplier', supplier);
+            await sb.from('products').delete().eq('supplier', supplier);
             if (products.length === 0) return;
             const insert = products.map(p => ({
                 id: Date.now() + Math.random(),
@@ -193,11 +204,11 @@
                 full_name: p.fullName,
                 supplier: supplier
             }));
-            await supabaseClient.from('products').insert(insert);
+            await sb.from('products').insert(insert);
         }
 
         async function getOrders() {
-            const { data, error } = await supabaseClient.from('orders').select('*');
+            const { data, error } = await sb.from('orders').select('*');
             if (error) { console.error(error); return []; }
             return data || [];
         }
@@ -218,7 +229,7 @@
                 order_date: new Date().toISOString().slice(0, 10),
                 read: false
             };
-            const { error } = await supabaseClient.from('orders').insert([newOrder]);
+            const { error } = await sb.from('orders').insert([newOrder]);
             if (error) throw error;
             return newOrder;
         }
@@ -246,7 +257,7 @@
         }
 
         async function markOrderRead(orderId) {
-            await supabaseClient.from('orders').update({ read: true }).eq('id', orderId);
+            await sb.from('orders').update({ read: true }).eq('id', orderId);
         }
 
         async function getUnreadCount(supplier) {
