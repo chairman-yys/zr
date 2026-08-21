@@ -11,56 +11,120 @@
     <script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js">
     </script>
     <style>
-        /* 所有样式与原版相同，为了简洁省略，实际使用应保留完整样式 */
-        /* 这里仅保留必要的占位，实际请复制之前的完整样式 */
+        /* ===== 完整样式 ===== */
+        :root {
+            --primary: #4F46E5;
+            --primary-light: #818CF8;
+            --primary-dark: #3730A3;
+            --primary-gradient: linear-gradient(135deg, #4F46E5 0%, #7C3AED 100%);
+            --success: #10B981;
+            --warning: #F59E0B;
+            --danger: #EF4444;
+            --gray-50: #F8FAFC;
+            --gray-100: #F1F5F9;
+            --gray-200: #E2E8F0;
+            --gray-300: #CBD5E1;
+            --gray-400: #94A3B8;
+            --gray-500: #64748B;
+            --gray-600: #475569;
+            --gray-700: #334155;
+            --gray-800: #1E293B;
+            --gray-900: #0F172A;
+            --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            --radius: 12px;
+            --radius-sm: 8px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
+
         body {
-            font-family: sans-serif;
-            background: #f1f5f9;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background: var(--gray-100);
+            color: var(--gray-800);
             min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
+            background: var(--gray-900);
+            background-image: radial-gradient(ellipse at 20% 50%, rgba(79, 70, 229, 0.15) 0%, transparent 60%),
+                radial-gradient(ellipse at 80% 50%, rgba(124, 58, 237, 0.15) 0%, transparent 60%);
         }
+
         .hidden {
             display: none !important;
         }
+
         .btn {
-            padding: 8px 16px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 10px 24px;
             border: none;
-            border-radius: 6px;
-            cursor: pointer;
+            border-radius: var(--radius-sm);
+            font-size: 0.95rem;
             font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            text-decoration: none;
+            gap: 8px;
         }
         .btn-primary {
-            background: #4F46E5;
+            background: var(--primary-gradient);
             color: #fff;
+            box-shadow: 0 4px 14px rgba(79, 70, 229, 0.35);
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(79, 70, 229, 0.45);
         }
         .btn-success {
             background: #10B981;
             color: #fff;
         }
+        .btn-success:hover {
+            background: #059669;
+            transform: translateY(-2px);
+        }
         .btn-danger {
             background: #EF4444;
             color: #fff;
         }
+        .btn-danger:hover {
+            background: #DC2626;
+            transform: translateY(-2px);
+        }
         .btn-outline {
             background: transparent;
-            border: 1px solid #ccc;
+            color: var(--gray-600);
+            border: 1.5px solid var(--gray-300);
+        }
+        .btn-outline:hover {
+            background: var(--gray-100);
+            border-color: var(--gray-400);
         }
         .btn-sm {
-            padding: 4px 10px;
+            padding: 6px 14px;
             font-size: 0.8rem;
+        }
+        .btn-group {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
         }
         .badge {
             display: inline-block;
-            padding: 2px 10px;
-            border-radius: 12px;
+            padding: 2px 12px;
+            border-radius: 9999px;
             font-size: 0.75rem;
+            font-weight: 600;
         }
         .badge-success {
             background: #D1FAE5;
@@ -74,80 +138,983 @@
             background: #FEE2E2;
             color: #991B1B;
         }
-        /* 模态框等样式与之前相同，此处省略 */
+        .badge-info {
+            background: #DBEAFE;
+            color: #1E40AF;
+        }
+        .badge-secondary {
+            background: #E5E7EB;
+            color: #4B5563;
+        }
+        .badge-notification {
+            background: #EF4444;
+            color: #fff;
+            animation: pulse 1.5s infinite;
+        }
+        @keyframes pulse {
+            0%,
+            100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.1);
+            }
+        }
+
+        /* ===== 登录页面 ===== */
+        #loginPage {
+            width: 100%;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .login-container {
+            display: flex;
+            width: 100%;
+            max-width: 1000px;
+            background: #fff;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-xl);
+            overflow: hidden;
+            min-height: 540px;
+        }
+        .login-left {
+            flex: 1;
+            padding: 48px 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            background: #fff;
+        }
+        .login-left .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 8px;
+        }
+        .login-left .logo svg {
+            width: 36px;
+            height: 36px;
+        }
+        .login-left .logo span {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--gray-900);
+        }
+        .login-left .logo span .highlight {
+            color: var(--primary);
+        }
+        .login-left h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--gray-900);
+            margin-top: 16px;
+            margin-bottom: 8px;
+        }
+        .login-left .subtitle {
+            color: var(--gray-500);
+            font-size: 0.95rem;
+            margin-bottom: 32px;
+        }
+        .login-left .form-group {
+            margin-bottom: 20px;
+        }
+        .login-left .form-group label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--gray-700);
+            margin-bottom: 6px;
+        }
+        .login-left .form-group input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1.5px solid var(--gray-200);
+            border-radius: var(--radius-sm);
+            font-size: 0.95rem;
+            transition: var(--transition);
+            background: var(--gray-50);
+        }
+        .login-left .form-group input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15);
+            background: #fff;
+        }
+        .login-left .login-btn {
+            width: 100%;
+            padding: 14px;
+            font-size: 1rem;
+            margin-top: 8px;
+        }
+        .login-left .error-msg {
+            color: var(--danger);
+            font-size: 0.85rem;
+            margin-top: 12px;
+            min-height: 24px;
+            text-align: center;
+        }
+        .login-left .test-accounts {
+            margin-top: 28px;
+            padding-top: 20px;
+            border-top: 1px solid var(--gray-200);
+        }
+        .login-left .test-accounts p {
+            font-size: 0.8rem;
+            color: var(--gray-500);
+            margin-bottom: 8px;
+        }
+        .login-left .test-accounts .accounts-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+        .login-left .test-accounts .account-item {
+            background: var(--gray-50);
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-family: monospace;
+            color: var(--gray-600);
+            border: 1px solid var(--gray-200);
+            cursor: pointer;
+            transition: var(--transition);
+            text-align: center;
+        }
+        .login-left .test-accounts .account-item:hover {
+            background: var(--gray-100);
+            border-color: var(--primary);
+        }
+        .login-left .test-accounts .account-item .role-tag {
+            display: inline-block;
+            font-size: 0.6rem;
+            padding: 1px 8px;
+            border-radius: 999px;
+            margin-left: 4px;
+        }
+        .role-tag-supplier {
+            background: #DBEAFE;
+            color: #1E40AF;
+        }
+        .role-tag-customer {
+            background: #D1FAE5;
+            color: #065F46;
+        }
+        .login-right {
+            flex: 1;
+            background: var(--primary-gradient);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 48px 40px;
+            color: #fff;
+            flex-direction: column;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .login-right::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle at 30% 40%, rgba(255, 255, 255, 0.08) 0%, transparent 60%);
+            animation: rotateBg 30s linear infinite;
+        }
+        @keyframes rotateBg {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+        .login-right .content {
+            position: relative;
+            z-index: 1;
+        }
+        .login-right .icon-big {
+            font-size: 4.5rem;
+            margin-bottom: 16px;
+            display: block;
+        }
+        .login-right h2 {
+            font-size: 1.6rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+        .login-right p {
+            opacity: 0.85;
+            font-size: 0.95rem;
+            line-height: 1.6;
+            max-width: 340px;
+        }
+        .login-right .features {
+            margin-top: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            text-align: left;
+            max-width: 300px;
+        }
+        .login-right .features .feature-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+        .login-right .features .feature-item span {
+            font-size: 1.2rem;
+        }
+
+        /* ===== 仪表板 ===== */
+        #dashboardPage {
+            width: 100%;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            background: var(--gray-100);
+        }
+
+        .topbar {
+            background: #fff;
+            padding: 0 32px;
+            height: 64px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: var(--shadow-sm);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 1px solid var(--gray-200);
+        }
+        .topbar .left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        .topbar .left .brand {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--gray-900);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .topbar .left .brand svg {
+            width: 28px;
+            height: 28px;
+        }
+        .topbar .left .brand .highlight {
+            color: var(--primary);
+        }
+        .topbar .left .role-badge {
+            font-size: 0.7rem;
+            padding: 4px 14px;
+            border-radius: 999px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .role-badge-supplier {
+            background: #DBEAFE;
+            color: #1E40AF;
+        }
+        .role-badge-customer {
+            background: #D1FAE5;
+            color: #065F46;
+        }
+        .topbar .right {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        .topbar .right .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.9rem;
+        }
+        .topbar .right .user-info .avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: var(--primary-gradient);
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.9rem;
+        }
+        .topbar .right .user-info .name {
+            font-weight: 600;
+            color: var(--gray-800);
+        }
+        .topbar .right .user-info .company {
+            color: var(--gray-500);
+            font-size: 0.8rem;
+        }
+
+        .dashboard-body {
+            display: flex;
+            flex: 1;
+            min-height: 0;
+        }
+
+        .sidebar {
+            width: 220px;
+            background: #fff;
+            border-right: 1px solid var(--gray-200);
+            padding: 20px 0;
+            flex-shrink: 0;
+            overflow-y: auto;
+        }
+        .sidebar .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 24px;
+            margin: 2px 12px;
+            border-radius: var(--radius-sm);
+            color: var(--gray-600);
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+            text-decoration: none;
+            border: none;
+            background: transparent;
+            width: calc(100% - 24px);
+            position: relative;
+        }
+        .sidebar .nav-item:hover {
+            background: var(--gray-100);
+            color: var(--gray-800);
+        }
+        .sidebar .nav-item.active {
+            background: var(--primary);
+            color: #fff;
+            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+        }
+        .sidebar .nav-item .icon {
+            font-size: 1.2rem;
+            width: 24px;
+            text-align: center;
+            flex-shrink: 0;
+        }
+        .sidebar .nav-item .notification-dot {
+            background: #EF4444;
+            color: #fff;
+            border-radius: 999px;
+            padding: 0 8px;
+            font-size: 0.65rem;
+            font-weight: 700;
+            line-height: 18px;
+            margin-left: auto;
+            animation: pulse 1.5s infinite;
+        }
+        .sidebar .nav-section {
+            padding: 16px 24px 8px;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            color: var(--gray-400);
+            font-weight: 600;
+        }
+
+        .main-content {
+            flex: 1;
+            padding: 24px 32px 32px;
+            overflow-y: auto;
+            background: var(--gray-50);
+        }
+        .main-content .page-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--gray-900);
+            margin-bottom: 6px;
+        }
+        .main-content .page-subtitle {
+            color: var(--gray-500);
+            margin-bottom: 24px;
+            font-size: 0.95rem;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 16px;
+            margin-bottom: 28px;
+        }
+        .stat-card {
+            background: #fff;
+            padding: 20px 24px;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--gray-200);
+            transition: var(--transition);
+        }
+        .stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
+        }
+        .stat-card .stat-label {
+            font-size: 0.8rem;
+            color: var(--gray-500);
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .stat-card .stat-value {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--gray-900);
+            margin-top: 4px;
+        }
+
+        .table-wrapper {
+            background: #fff;
+            border-radius: var(--radius);
+            border: 1px solid var(--gray-200);
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
+        }
+        .table-wrapper .table-header {
+            padding: 16px 24px;
+            border-bottom: 1px solid var(--gray-200);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+        .table-wrapper .table-header h3 {
+            font-size: 1rem;
+            font-weight: 600;
+        }
+        .table-wrapper table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+        }
+        .table-wrapper table th {
+            text-align: left;
+            padding: 12px 20px;
+            background: var(--gray-50);
+            font-weight: 600;
+            color: var(--gray-600);
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 1px solid var(--gray-200);
+        }
+        .table-wrapper table td {
+            padding: 12px 20px;
+            border-bottom: 1px solid var(--gray-100);
+            color: var(--gray-700);
+        }
+        .table-wrapper table tr:last-child td {
+            border-bottom: none;
+        }
+        .table-wrapper table tr:hover td {
+            background: var(--gray-50);
+        }
+
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 16px;
+            margin-top: 16px;
+        }
+        .product-card {
+            background: #fff;
+            border-radius: var(--radius);
+            padding: 20px;
+            border: 1px solid var(--gray-200);
+            text-align: center;
+            transition: var(--transition);
+        }
+        .product-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
+            border-color: var(--primary-light);
+        }
+        .product-card .product-code {
+            font-size: 0.8rem;
+            color: var(--gray-500);
+            font-family: monospace;
+        }
+        .product-card .product-short {
+            font-weight: 600;
+            font-size: 1.1rem;
+            margin: 4px 0;
+        }
+        .product-card .product-full {
+            font-size: 0.85rem;
+            color: var(--gray-600);
+            margin-bottom: 4px;
+        }
+        .product-card .product-supplier {
+            font-size: 0.7rem;
+            color: var(--gray-400);
+            margin-top: 4px;
+        }
+
+        /* 模态框 */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 999;
+            padding: 20px;
+        }
+        .modal {
+            background: #fff;
+            border-radius: var(--radius);
+            max-width: 600px;
+            width: 100%;
+            padding: 32px;
+            box-shadow: var(--shadow-xl);
+            animation: fadeIn 0.25s ease-out;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        .modal h2 {
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+        .modal .modal-sub {
+            color: var(--gray-500);
+            margin-bottom: 20px;
+        }
+        .modal .form-group {
+            margin-bottom: 16px;
+        }
+        .modal .form-group label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--gray-700);
+            margin-bottom: 4px;
+        }
+        .modal .form-group input,
+        .modal .form-group select,
+        .modal .form-group textarea {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1.5px solid var(--gray-200);
+            border-radius: var(--radius-sm);
+            font-size: 0.95rem;
+            transition: var(--transition);
+            background: var(--gray-50);
+            font-family: inherit;
+        }
+        .modal .form-group input:focus,
+        .modal .form-group select:focus,
+        .modal .form-group textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15);
+            background: #fff;
+        }
+        .modal .form-actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 20px;
+            justify-content: flex-end;
+        }
+        .modal .form-actions .btn {
+            flex: 1;
+        }
+        .modal table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 12px;
+        }
+        .modal table th {
+            text-align: left;
+            padding: 6px 8px;
+            background: var(--gray-50);
+            font-weight: 600;
+            font-size: 0.8rem;
+            border-bottom: 1px solid var(--gray-200);
+        }
+        .modal table td {
+            padding: 6px 8px;
+            border-bottom: 1px solid var(--gray-100);
+            font-size: 0.9rem;
+        }
+        .modal table tr:last-child td {
+            border-bottom: none;
+        }
+
+        /* 上传区域 */
+        .upload-area {
+            border: 2px dashed var(--gray-300);
+            border-radius: var(--radius-sm);
+            padding: 30px;
+            text-align: center;
+            cursor: pointer;
+            transition: var(--transition);
+            background: var(--gray-50);
+            margin: 16px 0;
+        }
+        .upload-area:hover {
+            border-color: var(--primary);
+            background: #EEF2FF;
+        }
+        .upload-area input[type="file"] {
+            display: none;
+        }
+        .upload-area .upload-icon {
+            font-size: 2.5rem;
+            display: block;
+            margin-bottom: 8px;
+        }
+        .upload-area .upload-text {
+            color: var(--gray-500);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--gray-500);
+        }
+        .empty-state .empty-icon {
+            font-size: 3rem;
+            display: block;
+            margin-bottom: 12px;
+        }
+
+        .fade-in {
+            animation: fadeIn 0.35s ease-out;
+        }
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(12px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* 下单表格 */
+        .order-table-wrap {
+            overflow-x: auto;
+        }
+        .order-table-wrap table {
+            width: 100%;
+            border-collapse: collapse;
+            background: #fff;
+            border-radius: var(--radius-sm);
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
+        }
+        .order-table-wrap table th {
+            background: var(--gray-50);
+            padding: 10px 14px;
+            text-align: left;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--gray-600);
+            border-bottom: 1px solid var(--gray-200);
+        }
+        .order-table-wrap table td {
+            padding: 8px 14px;
+            border-bottom: 1px solid var(--gray-100);
+            vertical-align: middle;
+        }
+        .order-table-wrap table tr:hover td {
+            background: var(--gray-50);
+        }
+        .order-table-wrap input[type="number"] {
+            width: 80px;
+            padding: 6px 8px;
+            border: 1.5px solid var(--gray-200);
+            border-radius: var(--radius-sm);
+            font-size: 0.9rem;
+        }
+        .order-table-wrap input[type="number"]:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15);
+        }
+
+        .order-extra-fields {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+            margin: 20px 0;
+            padding: 16px;
+            background: #fff;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--gray-200);
+        }
+        .order-extra-fields .field-group {
+            flex: 1 1 200px;
+        }
+        .order-extra-fields .field-group label {
+            display: block;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--gray-700);
+            margin-bottom: 4px;
+        }
+        .order-extra-fields .field-group input {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1.5px solid var(--gray-200);
+            border-radius: var(--radius-sm);
+            font-size: 0.9rem;
+        }
+        .order-extra-fields .field-group input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15);
+        }
+
+        .table-header-actions {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        /* 响应式 */
+        @media (max-width: 768px) {
+            .login-container {
+                flex-direction: column;
+                max-width: 440px;
+                min-height: auto;
+            }
+            .login-left {
+                padding: 32px 24px;
+            }
+            .login-right {
+                padding: 32px 24px;
+                min-height: 200px;
+            }
+            .login-right .features {
+                display: none;
+            }
+            .dashboard-body {
+                flex-direction: column;
+            }
+            .sidebar {
+                width: 100%;
+                border-right: none;
+                border-bottom: 1px solid var(--gray-200);
+                padding: 8px 0;
+                display: flex;
+                flex-wrap: wrap;
+                gap: 4px;
+                justify-content: center;
+                background: #fff;
+                position: sticky;
+                top: 64px;
+                z-index: 99;
+            }
+            .sidebar .nav-item {
+                padding: 8px 16px;
+                margin: 2px 4px;
+                width: auto;
+                font-size: 0.8rem;
+            }
+            .sidebar .nav-item .icon {
+                font-size: 1rem;
+                width: 20px;
+            }
+            .sidebar .nav-section {
+                display: none;
+            }
+            .topbar {
+                padding: 0 16px;
+                flex-wrap: wrap;
+                height: auto;
+                min-height: 56px;
+                gap: 8px;
+            }
+            .topbar .left .brand {
+                font-size: 0.95rem;
+            }
+            .topbar .right .user-info .company {
+                display: none;
+            }
+            .main-content {
+                padding: 16px;
+            }
+            .stats-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+            .table-wrapper {
+                overflow-x: auto;
+            }
+            .table-wrapper table {
+                font-size: 0.8rem;
+                min-width: 500px;
+            }
+            .table-wrapper table th,
+            .table-wrapper table td {
+                padding: 8px 12px;
+            }
+            .modal {
+                margin: 20px;
+                padding: 24px;
+                max-width: 100%;
+            }
+            .order-table-wrap input[type="number"] {
+                width: 60px;
+            }
+        }
+        @media (max-width: 480px) {
+            .login-left .test-accounts .accounts-grid {
+                grid-template-columns: 1fr;
+            }
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--gray-100);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--gray-300);
+            border-radius: 999px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--gray-400);
+        }
     </style>
 </head>
 <body>
-    <!-- 登录界面 -->
+
+    <!-- ============================================================ -->
+    <!-- 登录页面 -->
+    <!-- ============================================================ -->
     <div id="loginPage">
         <div class="login-container">
             <div class="login-left">
-                <h1>供应链协同平台</h1>
-                <form id="loginForm">
+                <div class="logo">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--primary);">
+                        <path d="M12 2L2 7l10 5 10-5-10-5z" />
+                        <path d="M2 17l10 5 10-5" />
+                        <path d="M2 12l10 5 10-5" />
+                    </svg>
+                    <span>协同<span class="highlight">链</span></span>
+                </div>
+                <h1>欢迎回来</h1>
+                <p class="subtitle">登录您的账号以访问供应链协同平台</p>
+                <form id="loginForm" autocomplete="off">
                     <div class="form-group">
-                        <label>账号</label>
-                        <input type="text" id="username" value="supplier1" />
+                        <label for="username">账号</label>
+                        <input type="text" id="username" placeholder="请输入账号" value="supplier1" />
                     </div>
                     <div class="form-group">
-                        <label>密码</label>
-                        <input type="password" id="password" value="123456" />
+                        <label for="password">密码</label>
+                        <input type="password" id="password" placeholder="请输入密码" value="123456" />
                     </div>
-                    <button type="submit" class="btn btn-primary login-btn">登录</button>
-                    <div id="loginError" style="color:red; margin-top:10px;"></div>
+                    <button type="submit" class="btn btn-primary login-btn">登 录</button>
+                    <div class="error-msg" id="loginError"></div>
                 </form>
                 <div class="test-accounts">
-                    <p>测试账号（点击填充）</p>
+                    <p>📋 测试账号 (点击填充)</p>
                     <div class="accounts-grid">
-                        <div class="account-item" data-username="supplier1" data-password="123456">供应商</div>
-                        <div class="account-item" data-username="customer1" data-password="123456">客户</div>
+                        <div class="account-item" data-username="supplier1" data-password="123456">
+                            supplier1 <span class="role-tag role-tag-supplier">供应商</span>
+                        </div>
+                        <div class="account-item" data-username="customer1" data-password="123456">
+                            customer1 <span class="role-tag role-tag-customer">客户</span>
+                        </div>
                     </div>
+                    <p style="margin-top:6px; font-size:0.7rem; color:var(--gray-400);">所有账号密码均为 <code>123456</code></p>
                 </div>
             </div>
             <div class="login-right">
-                <p>连接供应商与客户，高效协同</p>
+                <div class="content">
+                    <span class="icon-big">🤝</span>
+                    <h2>供应链协同平台</h2>
+                    <p>连接供应商与客户，实现高效协同、透明管理、智能决策。</p>
+                    <div class="features">
+                        <div class="feature-item"><span>📦</span> 订单全流程管理</div>
+                        <div class="feature-item"><span>📊</span> 实时数据看板</div>
+                        <div class="feature-item"><span>🔗</span> 供需精准匹配</div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- 仪表板 -->
+    <!-- ============================================================ -->
+    <!-- 仪表板页面 -->
+    <!-- ============================================================ -->
     <div id="dashboardPage" class="hidden">
         <header class="topbar">
-            <span id="roleBadge">供应商</span>
-            <div>
-                <span id="userDisplayName">用户</span>
-                <button id="logoutBtn">退出</button>
+            <div class="left">
+                <div class="brand">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--primary); width:28px; height:28px;">
+                        <path d="M12 2L2 7l10 5 10-5-10-5z" />
+                        <path d="M2 17l10 5 10-5" />
+                        <path d="M2 12l10 5 10-5" />
+                    </svg>
+                    协同<span class="highlight">链</span>
+                </div>
+                <span class="role-badge" id="roleBadge">供应商</span>
+            </div>
+            <div class="right">
+                <div class="user-info">
+                    <div class="avatar" id="userAvatar">S</div>
+                    <div>
+                        <div class="name" id="userDisplayName">供应商A</div>
+                        <div class="company" id="userCompany">江门中远海运铝业</div>
+                    </div>
+                </div>
+                <button class="btn btn-outline btn-sm" id="logoutBtn">退出</button>
             </div>
         </header>
         <div class="dashboard-body">
-            <nav id="sidebar"></nav>
-            <main id="mainContent"></main>
+            <nav class="sidebar" id="sidebar"></nav>
+            <main class="main-content" id="mainContent"></main>
         </div>
     </div>
 
+    <!-- ============================================================ -->
     <!-- 模态框容器 -->
+    <!-- ============================================================ -->
     <div id="modalContainer"></div>
 
+    <!-- ============================================================ -->
+    <!-- JavaScript（所有代码都在常规 <script> 中） -->
+    <!-- ============================================================ -->
     <script>
         // ============================================================
-        // Supabase 配置（替换成你的）
+        // Supabase 配置 - 请替换成你的
         // ============================================================
-        const SUPABASE_URL = 'https://whpmzscafgiloazdfjas.supabase.co';
-        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndocG16c2NhZmdpbG9hemRmamFzIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc4NjkxMzAyNywiZXhwIjoyMTAyNDg5MDI3fQ.GptXUyS_JplMXiGi1UyJRgWtsGAEsTx9zaJvXcYcYVk';
-        const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-        console.log('🔧 开始创建 Supabase 客户端...');
-console.log('URL:', SUPABASE_URL);
-console.log('Key:', SUPABASE_ANON_KEY);
-        
-let sb;
-try {
-    sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-    console.log('✅ 客户端创建成功:', sb);
-} catch (err) {
-    console.error('❌ 创建客户端失败:', err);
-}
-// 后续使用 sb 代替 supabaseClient;
+        const SUPABASE_URL = 'https://whpmzscafgiloazdfjas.supabase.co'; // 你的项目 URL
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndocG16c2NhZmdpbG9hemRmamFzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODY5MTMwMjcsImV4cCI6MjEwMjQ4OTAyN30.q5JGYqmeMVI2ykQ7u4PzwtPotF6EpSzG5yocyJAOofQ'; // 你的 anon key
 
-        
+        // 创建客户端（避免全局变量冲突）
+        const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        console.log('✅ Supabase 客户端已初始化');
+
         // ============================================================
         // 用户数据（硬编码测试）
         // ============================================================
@@ -185,6 +1152,8 @@ try {
         const mainContent = document.getElementById('mainContent');
         const roleBadge = document.getElementById('roleBadge');
         const userDisplayName = document.getElementById('userDisplayName');
+        const userCompany = document.getElementById('userCompany');
+        const userAvatar = document.getElementById('userAvatar');
         const modalContainer = document.getElementById('modalContainer');
 
         // ============================================================
@@ -237,7 +1206,7 @@ try {
         }
 
         async function updateOrder(orderId, newItems, deliveryDate, note) {
-            const { error } = await supabase
+            const { error } = await sb
                 .from('orders')
                 .update({
                     items: newItems,
@@ -249,13 +1218,13 @@ try {
         }
 
         async function respondOrder(orderId, status, responseNote) {
-            const { data, error } = await supabase
+            const { error } = await sb
                 .from('orders')
                 .update({ status, response_note: responseNote || '' })
                 .eq('id', orderId)
                 .eq('status', '待确认');
             if (error) throw error;
-            return data;
+            return true;
         }
 
         async function markOrderRead(orderId) {
@@ -263,7 +1232,7 @@ try {
         }
 
         async function getUnreadCount(supplier) {
-            const { count, error } = await supabase
+            const { count, error } = await sb
                 .from('orders')
                 .select('id', { count: 'exact', head: true })
                 .eq('supplier', supplier)
@@ -470,7 +1439,7 @@ try {
                 });
                 return;
             } else if (currentNav === 'products') {
-                // 产品管理或下单采购（与之前相同，省略细节，但保留功能）
+                // 产品管理或下单采购
                 if (isSupplier) {
                     html = `
                         <div class="fade-in">
@@ -608,7 +1577,6 @@ try {
                         products.push({ code, shortName, fullName });
                     }
                     if (products.length === 0) { alert('未解析到有效数据'); return; }
-                    // 去重
                     const map = new Map();
                     products.forEach(p => map.set(p.code, p));
                     const unique = Array.from(map.values());
@@ -729,10 +1697,9 @@ try {
         }
 
         // ============================================================
-        // 客户编辑订单（允许修改每个产品的数量）
+        // 客户编辑订单（修改数量）
         // ============================================================
         function openEditOrderModal(order) {
-            // 复制当前 items
             let items = order.items.map(item => ({ ...item }));
             const modalHtml = `
                 <div class="modal-overlay" id="editModalOverlay">
@@ -768,9 +1735,7 @@ try {
             `;
             modalContainer.innerHTML = modalHtml;
 
-            // 绑定保存事件
             document.getElementById('saveEditBtn').addEventListener('click', async function() {
-                // 收集新数量
                 const inputs = document.querySelectorAll('.edit-qty');
                 const newItems = [];
                 inputs.forEach(input => {
@@ -843,6 +1808,8 @@ try {
             roleBadge.textContent = user.role === 'supplier' ? '供应商' : '客户';
             roleBadge.className = `role-badge role-badge-${user.role}`;
             userDisplayName.textContent = user.name;
+            userCompany.textContent = user.company;
+            userAvatar.textContent = user.name.charAt(0);
             await renderSidebar(user);
             await renderMainContent(user);
         }
@@ -869,7 +1836,6 @@ try {
                 usernameInput.value = this.dataset.username;
                 passwordInput.value = this.dataset.password;
                 loginError.textContent = '';
-                // 不再自动登录
             });
         });
 
@@ -880,7 +1846,7 @@ try {
         dashboardPage.classList.add('hidden');
         usernameInput.value = 'supplier1';
         passwordInput.value = '123456';
-        console.log('系统已启动，请替换Supabase密钥');
+        console.log('✅ 系统已启动，Supabase 客户端已创建');
     </script>
 </body>
 </html>
