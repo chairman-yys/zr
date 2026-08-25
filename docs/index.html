@@ -1166,17 +1166,43 @@
         }
 
         async function replaceProductsForSupplier(supplier, products) {
-            await supabaseClient.from('products').delete().eq('supplier', supplier);
-            if (products.length === 0) return;
-            const insert = products.map(p => ({
-                id: Date.now() + Math.random(),
-                code: p.code,
-                short_name: p.shortName,
-                full_name: p.fullName,
-                supplier: supplier
-            }));
-            await supabaseClient.from('products').insert(insert);
+    console.log('开始替换产品，供应商:', supplier, '产品数:', products.length);
+    try {
+        // 删除旧产品
+        const { error: delError } = await supabaseClient.from('products').delete().eq('supplier', supplier);
+        if (delError) {
+            console.error('删除失败:', delError);
+            throw delError;
         }
+        console.log('✅ 删除成功');
+
+        if (products.length === 0) return;
+
+        // 准备插入数据
+        const insert = products.map(p => ({
+            id: Math.floor(Date.now() + Math.random() * 1000000), // 确保整数
+            code: p.code,
+            short_name: p.shortName,
+            full_name: p.fullName,
+            supplier: supplier
+        }));
+
+        console.log('待插入数据（前3条）:', insert.slice(0, 3));
+
+        // 🔥 关键：捕获插入结果
+        const { data, error: insError } = await supabaseClient.from('products').insert(insert);
+        if (insError) {
+            console.error('❌ 插入失败，完整错误:', insError);
+            if (insError.details) console.error('详情:', insError.details);
+            if (insError.hint) console.error('提示:', insError.hint);
+            throw insError;
+        }
+        console.log('✅ 插入成功，返回数据条数:', data ? data.length : 0);
+    } catch (err) {
+        console.error('❌ replaceProductsForSupplier 出错:', err);
+        throw err; // 让上层捕获
+    }
+}
 
         async function getOrders() {
             const { data, error } = await supabaseClient.from('orders').select('*');
