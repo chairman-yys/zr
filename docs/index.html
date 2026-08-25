@@ -1206,7 +1206,7 @@
         }
 
         async function updateOrder(orderId, newItems, deliveryDate, note) {
-            const { error } = await sb
+            const { error } = await supabaseClient
                 .from('orders')
                 .update({
                     items: newItems,
@@ -1218,7 +1218,7 @@
         }
 
         async function respondOrder(orderId, status, responseNote) {
-            const { error } = await sb
+            const { error } = await supabaseClient
                 .from('orders')
                 .update({ status, response_note: responseNote || '' })
                 .eq('id', orderId)
@@ -1232,7 +1232,7 @@
         }
 
         async function getUnreadCount(supplier) {
-            const { count, error } = await sb
+            const { count, error } = await supabaseClient
                 .from('orders')
                 .select('id', { count: 'exact', head: true })
                 .eq('supplier', supplier)
