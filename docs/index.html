@@ -1564,6 +1564,8 @@
                     const workbook = XLSX.read(ev.target.result, { type: 'array' });
                     const sheet = workbook.Sheets[workbook.SheetNames[0]];
                     const json = XLSX.utils.sheet_to_json(sheet, { header: 1 });
+                    console.log('📄 原始JSON:', json);  // ✅ 打印原始数据
+                    
                     let products = [];
                     let start = 0;
                     if (json.length > 0 && json[0].some(c => /编码|简称|全称/i.test(c))) start = 1;
@@ -1576,11 +1578,15 @@
                         if (!code || !shortName || !fullName) continue;
                         products.push({ code, shortName, fullName });
                     }
+                    console.log('📦 解析出的产品:', products);  // ✅ 打印解析结果
+
                     if (products.length === 0) { alert('未解析到有效数据'); return; }
                     const map = new Map();
                     products.forEach(p => map.set(p.code, p));
                     const unique = Array.from(map.values());
                     await replaceProductsForSupplier(currentUser.company, unique);
+                    console.log('✅ 保存成功');
+                    
                     alert(`导入 ${unique.length} 个产品`);
                     await renderMainContent(currentUser);
                     document.getElementById('fileInput').value = '';
