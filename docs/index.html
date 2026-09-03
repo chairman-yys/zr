@@ -9,7 +9,7 @@
     <script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js">
     </script>
     <style>
-        /* ===== 完整样式（同前，此处省略以节省篇幅，实际使用时必须保留） ===== */
+        /* ===== 完整样式（同之前，保持简约） ===== */
         * {
             margin: 0;
             padding: 0;
@@ -923,7 +923,6 @@
 
             const planItems = [];
             const extraItems = [];
-            const updates = {};
 
             for (let item of orderItems) {
                 const code = item.code;
@@ -933,7 +932,6 @@
                 if (planQty > 0) {
                     const consume = Math.min(orderQty, planQty);
                     planMap[code] = planQty - consume;
-                    updates[code] = planMap[code];
                     planItems.push({
                         productCode: code,
                         productShort: item.shortName,
@@ -1124,7 +1122,8 @@
             let allOrders = await getOrders();
             let allProducts = await getProducts();
 
-            const actualOrders = allOrders.filter(o => !o.note.includes('[预测订单]'));
+            // 排除预测订单
+            const actualOrders = allOrders.filter(o => !o.note?.includes('[预测订单]'));
             const orders = actualOrders.filter(o =>
                 isSupplier ? o.supplier === user.company : o.customer === user.company
             );
@@ -1157,7 +1156,7 @@
                                     <thead><tr><th>订单号</th><th>${isSupplier?'客户':'供应商'}</th><th>产品项数</th><th>总数量</th><th>交期</th><th>状态</th><th>日期</th><th></th></tr></thead>
                                     <tbody>
                                     ${orders.slice(0,5).map(o => {
-                                        const total = o.items ? o.items.reduce((s,i) => s+i.quantity, 0) : 0;
+                                        const total = o.items ? o.items.reduce((s,i) => s + (i.quantity || 0), 0) : 0;
                                         return `<tr>
                                             <td>${o.id}</td>
                                             <td>${isSupplier ? o.customer : o.supplier}</td>
@@ -1176,7 +1175,6 @@
                     </div>
                 `;
             } else if (currentNav === 'orders') {
-                // 调用订单表格渲染函数
                 renderOrderTable(orders, isSupplier);
                 return;
             } else if (currentNav === 'products') {
@@ -1266,7 +1264,7 @@
                 }
                 return;
             } else if (currentNav === 'stockplans') {
-                // 备料计划（供应商可编辑，客户只读）
+                // 备料计划
                 let targetSupplier;
                 if (isSupplier) {
                     targetSupplier = user.company;
@@ -1353,7 +1351,7 @@
         }
 
         // ============================================================
-        // 订单管理表格渲染（完整实现）
+        // 订单管理表格渲染（完整实现，确保数量显示正确）
         // ============================================================
         function renderOrderTable(orders, isSupplier) {
             let html = `
@@ -1369,11 +1367,21 @@
                             <table>
                                 <thead><tr>
                                     <th>订单号</th><th>${isSupplier ? '客户' : '供应商'}</th>
-                                    <th>产品项数</th><th>总数量</th><th>交期</th><th>状态</th><th>反馈</th><th>日期</th><th>操作</th>
+                                    <th>产品项数</th>
+                                    <th>总数量</th>
+                                    <th>交期</th>
+                                    <th>状态</th>
+                                    <th>反馈</th>
+                                    <th>日期</th>
+                                    <th>操作</th>
                                 </tr></thead>
                                 <tbody>
                                 ${orders.map(o => {
-                                    const total = o.items ? o.items.reduce((s,i) => s+i.quantity, 0) : 0;
+                                    // 安全计算总数量
+                                    let total = 0;
+                                    if (o.items && Array.isArray(o.items)) {
+                                        total = o.items.reduce((s, item) => s + (item.quantity || 0), 0);
+                                    }
                                     const canEdit = !isSupplier && o.status === '待确认';
                                     return `<tr>
                                         <td>${o.id}</td>
@@ -1441,7 +1449,7 @@
                         await supabaseClient.from('orders').delete().eq('id', orderId);
                         alert('已删除');
                         const freshOrders = await getOrders();
-                        const actual = freshOrders.filter(o => !o.note.includes('[预测订单]'));
+                        const actual = freshOrders.filter(o => !o.note?.includes('[预测订单]'));
                         const userOrders = actual.filter(o =>
                             currentUser.role === 'supplier' ? o.supplier === currentUser.company : o.customer ===
                             currentUser.company
@@ -1463,7 +1471,7 @@
             ];
             orders.forEach(o => {
                 const statusText = o.status === '已同意' ? '同意' : o.status === '已拒绝' ? '拒绝' : o.status;
-                if (o.items && o.items.length > 0) {
+                if (o.items && Array.isArray(o.items)) {
                     o.items.forEach(item => {
                         rows.push([
                             item.productCode || '',
@@ -1573,8 +1581,8 @@
                         <table>
                             <thead><tr><th>编码</th><th>简称</th><th>全称</th><th style="text-align:right;">数量</th></tr></thead>
                             <tbody>
-                                ${order.items ? order.items.map(item => `
-                                    <tr><td>${item.productCode||''}</td><td>${item.productShort||''}</td><td>${item.productFull||''}</td><td style="text-align:right;">${item.quantity}</td></tr>
+                                ${order.items && Array.isArray(order.items) ? order.items.map(item => `
+                                    <tr><td>${item.productCode||''}</td><td>${item.productShort||''}</td><td>${item.productFull||''}</td><td style="text-align:right;">${item.quantity || 0}</td></tr>
                                 `).join('') : '<tr><td colspan="4">无明细</td></tr>'}
                             </tbody>
                         </table>
@@ -1627,7 +1635,7 @@
         }
 
         function openEditOrderModal(order) {
-            let items = order.items.map(item => ({ ...item }));
+            let items = order.items ? order.items.map(item => ({ ...item })) : [];
             const modalHtml = `
                 <div class="modal-overlay" id="editModalOverlay">
                     <div class="modal" style="max-width:700px;">
@@ -1638,9 +1646,9 @@
                             <tbody id="editItemsBody">
                                 ${items.map((item, idx) => `
                                     <tr>
-                                        <td>${item.productCode}</td>
-                                        <td>${item.productFull || item.productShort}</td>
-                                        <td><input type="number" class="edit-qty" data-index="${idx}" value="${item.quantity}" min="0" step="1" style="width:70px;padding:4px 8px;border:1px solid #d1d5db;border-radius:4px;" /></td>
+                                        <td>${item.productCode || ''}</td>
+                                        <td>${item.productFull || item.productShort || ''}</td>
+                                        <td><input type="number" class="edit-qty" data-index="${idx}" value="${item.quantity || 0}" min="0" step="1" style="width:70px;padding:4px 8px;border:1px solid #d1d5db;border-radius:4px;" /></td>
                                     </tr>
                                 `).join('')}
                             </tbody>
@@ -1671,9 +1679,9 @@
                     if (qty > 0) {
                         const original = items[idx];
                         newItems.push({
-                            productCode: original.productCode,
-                            productShort: original.productShort,
-                            productFull: original.productFull,
+                            productCode: original.productCode || '',
+                            productShort: original.productShort || '',
+                            productFull: original.productFull || '',
                             quantity: qty
                         });
                     }
@@ -1762,7 +1770,7 @@
         dashboardPage.classList.add('hidden');
         usernameInput.value = 'supplier1';
         passwordInput.value = '123456';
-        console.log('系统已启动（完整订单管理功能）');
+        console.log('系统已启动（订单数量显示已修复）');
     </script>
 </body>
 </html>
