@@ -4,882 +4,749 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>供应链协同平台</title>
-    <!-- Supabase UMD -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js">
     </script>
-    <!-- SheetJS -->
     <script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js">
     </script>
     <style>
-        /* ===== 完整样式 ===== */
-        :root {
-            --primary: #4F46E5;
-            --primary-light: #818CF8;
-            --primary-dark: #3730A3;
-            --primary-gradient: linear-gradient(135deg, #4F46E5 0%, #7C3AED 100%);
-            --success: #10B981;
-            --warning: #F59E0B;
-            --danger: #EF4444;
-            --gray-50: #F8FAFC;
-            --gray-100: #F1F5F9;
-            --gray-200: #E2E8F0;
-            --gray-300: #CBD5E1;
-            --gray-400: #94A3B8;
-            --gray-500: #64748B;
-            --gray-600: #475569;
-            --gray-700: #334155;
-            --gray-800: #1E293B;
-            --gray-900: #0F172A;
-            --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
-            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-            --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-            --radius: 12px;
-            --radius-sm: 8px;
-            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
-
-        /* ===== 简约配色（只改颜色、边框、圆角、阴影，不动布局） ===== */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
-body {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-    background: #f5f6fa;
-    color: #1e293b;
-    min-height: 100vh;
-}
-
-.hidden {
-    display: none !important;
-}
-
-/* 按钮 */
-.btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    padding: 8px 20px;
-    border: 1px solid #d1d5db;
-    border-radius: 6px;
-    font-size: 0.9rem;
-    font-weight: 500;
-    cursor: pointer;
-    transition: background 0.2s, border-color 0.2s;
-    background: #fff;
-    color: #1e293b;
-    gap: 6px;
-}
-.btn:hover {
-    background: #f1f3f5;
-}
-.btn-primary {
-    background: #1e293b;
-    color: #fff;
-    border-color: #1e293b;
-}
-.btn-primary:hover {
-    background: #334155;
-    border-color: #334155;
-}
-.btn-success {
-    background: #0b7e3d;
-    color: #fff;
-    border-color: #0b7e3d;
-}
-.btn-success:hover {
-    background: #0a6a33;
-    border-color: #0a6a33;
-}
-.btn-danger {
-    background: #b91c1c;
-    color: #fff;
-    border-color: #b91c1c;
-}
-.btn-danger:hover {
-    background: #991b1b;
-    border-color: #991b1b;
-}
-.btn-sm {
-    padding: 4px 12px;
-    font-size: 0.8rem;
-}
-.btn-outline {
-    background: transparent;
-    border-color: #d1d5db;
-}
-.btn-outline:hover {
-    background: #f1f3f5;
-}
-
-/* 徽章 */
-.badge {
-    display: inline-block;
-    padding: 2px 10px;
-    border-radius: 12px;
-    font-size: 0.75rem;
-    font-weight: 500;
-    background: #e2e8f0;
-    color: #475569;
-}
-.badge-success {
-    background: #d1fae5;
-    color: #065f46;
-}
-.badge-warning {
-    background: #fef3c7;
-    color: #92400e;
-}
-.badge-danger {
-    background: #fee2e2;
-    color: #991b1b;
-}
-.badge-info {
-    background: #dbeafe;
-    color: #1e40af;
-}
-
-/* 卡片 */
-.card {
-    background: #fff;
-    border-radius: 8px;
-    border: 1px solid #e2e8f0;
-    padding: 20px 24px;
-}
-
-/* 空状态 */
-.empty-state {
-    text-align: center;
-    padding: 40px 20px;
-    color: #94a3b8;
-}
-
-/* ===== 登录页 ===== */
-#loginPage {
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 20px;
-    background: #f5f6fa;
-}
-.login-container {
-    width: 100%;
-    max-width: 420px;
-    background: #fff;
-    border-radius: 8px;
-    border: 1px solid #e2e8f0;
-    padding: 40px 36px;
-}
-.login-container h1 {
-    font-size: 1.5rem;
-    font-weight: 600;
-    margin-bottom: 6px;
-}
-.login-container .subtitle {
-    color: #64748b;
-    font-size: 0.9rem;
-    margin-bottom: 28px;
-}
-.form-group {
-    margin-bottom: 16px;
-}
-.form-group label {
-    display: block;
-    font-size: 0.85rem;
-    font-weight: 500;
-    margin-bottom: 4px;
-    color: #334155;
-}
-.form-group input {
-    width: 100%;
-    padding: 10px 14px;
-    border: 1px solid #d1d5db;
-    border-radius: 6px;
-    font-size: 0.95rem;
-    transition: border-color 0.2s;
-    background: #fff;
-}
-.form-group input:focus {
-    outline: none;
-    border-color: #1e293b;
-}
-.login-btn {
-    width: 100%;
-    padding: 10px;
-    font-size: 1rem;
-    margin-top: 6px;
-}
-.error-msg {
-    color: #b91c1c;
-    font-size: 0.85rem;
-    margin-top: 10px;
-    min-height: 24px;
-}
-.test-accounts {
-    margin-top: 24px;
-    padding-top: 20px;
-    border-top: 1px solid #e2e8f0;
-}
-.test-accounts p {
-    font-size: 0.8rem;
-    color: #94a3b8;
-    margin-bottom: 8px;
-}
-.accounts-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 6px;
-}
-.account-item {
-    background: #f8fafc;
-    padding: 6px 12px;
-    border-radius: 4px;
-    font-size: 0.8rem;
-    font-family: monospace;
-    border: 1px solid #e2e8f0;
-    cursor: pointer;
-    text-align: center;
-    transition: background 0.2s;
-}
-.account-item:hover {
-    background: #e2e8f0;
-}
-.account-item .role-tag {
-    font-size: 0.6rem;
-    padding: 1px 8px;
-    border-radius: 10px;
-    margin-left: 4px;
-    font-family: sans-serif;
-}
-.role-tag-supplier {
-    background: #dbeafe;
-    color: #1e40af;
-}
-.role-tag-customer {
-    background: #d1fae5;
-    color: #065f46;
-}
-.login-brand {
-    text-align: center;
-    margin-bottom: 24px;
-}
-.login-brand .name {
-    font-size: 1.6rem;
-    font-weight: 700;
-    letter-spacing: -0.5px;
-}
-.login-brand .name span {
-    color: #1e293b;
-}
-
-/* ===== 仪表板 ===== */
-#dashboardPage {
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    background: #f5f6fa;
-}
-.topbar {
-    background: #fff;
-    padding: 0 24px;
-    height: 56px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    border-bottom: 1px solid #e2e8f0;
-    flex-shrink: 0;
-}
-.topbar .left {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-}
-.topbar .brand {
-    font-size: 1.1rem;
-    font-weight: 700;
-}
-.topbar .brand .highlight {
-    color: #1e293b;
-}
-.topbar .role-badge {
-    font-size: 0.7rem;
-    padding: 2px 12px;
-    border-radius: 12px;
-    font-weight: 500;
-    background: #e2e8f0;
-    color: #475569;
-}
-.role-badge-supplier {
-    background: #dbeafe;
-    color: #1e40af;
-}
-.role-badge-customer {
-    background: #d1fae5;
-    color: #065f46;
-}
-.topbar .right {
-    display: flex;
-    align-items: center;
-    gap: 14px;
-}
-.topbar .user-info {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    font-size: 0.9rem;
-}
-.topbar .user-info .avatar {
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    background: #1e293b;
-    color: #fff;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: 600;
-    font-size: 0.8rem;
-}
-.topbar .user-info .name {
-    font-weight: 500;
-}
-.topbar .user-info .company {
-    color: #94a3b8;
-    font-size: 0.8rem;
-}
-
-.dashboard-body {
-    display: flex;
-    flex: 1;
-    min-height: 0;
-}
-
-/* 侧边栏 */
-.sidebar {
-    width: 180px;
-    background: #fff;
-    border-right: 1px solid #e2e8f0;
-    padding: 16px 0;
-    flex-shrink: 0;
-    overflow-y: auto;
-}
-.sidebar .nav-item {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 8px 20px;
-    margin: 2px 10px;
-    border-radius: 6px;
-    color: #64748b;
-    font-size: 0.9rem;
-    font-weight: 500;
-    cursor: pointer;
-    transition: background 0.2s, color 0.2s;
-    border: none;
-    background: transparent;
-    width: calc(100% - 20px);
-}
-.sidebar .nav-item:hover {
-    background: #f1f3f5;
-    color: #1e293b;
-}
-.sidebar .nav-item.active {
-    background: #1e293b;
-    color: #fff;
-}
-.sidebar .nav-item .notification-dot {
-    background: #b91c1c;
-    color: #fff;
-    border-radius: 50%;
-    width: 20px;
-    height: 20px;
-    font-size: 0.65rem;
-    font-weight: 700;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-left: auto;
-}
-.sidebar .nav-section {
-    padding: 8px 20px 4px;
-    font-size: 0.65rem;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    color: #94a3b8;
-    font-weight: 600;
-}
-
-/* 主内容 */
-.main-content {
-    flex: 1;
-    padding: 20px 28px;
-    overflow-y: auto;
-    background: #f5f6fa;
-}
-.main-content .page-title {
-    font-size: 1.3rem;
-    font-weight: 600;
-    margin-bottom: 4px;
-}
-.main-content .page-subtitle {
-    color: #94a3b8;
-    font-size: 0.9rem;
-    margin-bottom: 20px;
-}
-
-/* 统计卡片 */
-.stats-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-    gap: 12px;
-    margin-bottom: 20px;
-}
-.stat-card {
-    background: #fff;
-    padding: 16px 20px;
-    border-radius: 8px;
-    border: 1px solid #e2e8f0;
-}
-.stat-card .stat-label {
-    font-size: 0.75rem;
-    color: #94a3b8;
-    text-transform: uppercase;
-    letter-spacing: 0.3px;
-    font-weight: 500;
-}
-.stat-card .stat-value {
-    font-size: 1.6rem;
-    font-weight: 600;
-    margin-top: 2px;
-}
-
-/* 表格 */
-.table-wrapper {
-    background: #fff;
-    border-radius: 8px;
-    border: 1px solid #e2e8f0;
-    overflow: hidden;
-}
-.table-wrapper .table-header {
-    padding: 12px 20px;
-    border-bottom: 1px solid #e2e8f0;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 10px;
-}
-.table-wrapper .table-header h3 {
-    font-size: 0.95rem;
-    font-weight: 600;
-}
-.table-wrapper table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 0.9rem;
-}
-.table-wrapper table th {
-    text-align: left;
-    padding: 10px 16px;
-    background: #f8fafc;
-    font-weight: 600;
-    font-size: 0.75rem;
-    text-transform: uppercase;
-    letter-spacing: 0.3px;
-    color: #64748b;
-    border-bottom: 1px solid #e2e8f0;
-}
-.table-wrapper table td {
-    padding: 10px 16px;
-    border-bottom: 1px solid #f1f3f5;
-    color: #334155;
-}
-.table-wrapper table tr:last-child td {
-    border-bottom: none;
-}
-.table-wrapper table tr:hover td {
-    background: #f8fafc;
-}
-
-/* 产品网格 */
-.products-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-    gap: 12px;
-    margin-top: 12px;
-}
-.product-card {
-    background: #fff;
-    border-radius: 8px;
-    padding: 16px;
-    border: 1px solid #e2e8f0;
-    text-align: center;
-    transition: border-color 0.2s;
-}
-.product-card:hover {
-    border-color: #94a3b8;
-}
-.product-card .product-code {
-    font-size: 0.75rem;
-    color: #94a3b8;
-    font-family: monospace;
-}
-.product-card .product-short {
-    font-weight: 600;
-    font-size: 1rem;
-    margin: 4px 0 2px;
-}
-.product-card .product-full {
-    font-size: 0.8rem;
-    color: #64748b;
-    margin-bottom: 4px;
-}
-.product-card .product-supplier {
-    font-size: 0.7rem;
-    color: #94a3b8;
-}
-
-/* 模态框 */
-.modal-overlay {
-    position: fixed;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.4);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 999;
-    padding: 20px;
-}
-.modal {
-    background: #fff;
-    border-radius: 8px;
-    max-width: 560px;
-    width: 100%;
-    padding: 28px 32px;
-    max-height: 90vh;
-    overflow-y: auto;
-}
-.modal h2 {
-    font-size: 1.2rem;
-    font-weight: 600;
-    margin-bottom: 4px;
-}
-.modal .modal-sub {
-    color: #64748b;
-    font-size: 0.9rem;
-    margin-bottom: 16px;
-}
-.modal .form-group {
-    margin-bottom: 14px;
-}
-.modal .form-group label {
-    display: block;
-    font-size: 0.85rem;
-    font-weight: 500;
-    margin-bottom: 4px;
-    color: #334155;
-}
-.modal .form-group input,
-.modal .form-group textarea,
-.modal .form-group select {
-    width: 100%;
-    padding: 8px 12px;
-    border: 1px solid #d1d5db;
-    border-radius: 6px;
-    font-size: 0.9rem;
-    background: #fff;
-    font-family: inherit;
-}
-.modal .form-group input:focus,
-.modal .form-group textarea:focus,
-.modal .form-group select:focus {
-    outline: none;
-    border-color: #1e293b;
-}
-.modal .form-actions {
-    display: flex;
-    gap: 10px;
-    margin-top: 18px;
-    justify-content: flex-end;
-}
-.modal .form-actions .btn {
-    flex: 1;
-}
-.modal table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 10px;
-    font-size: 0.9rem;
-}
-.modal table th {
-    text-align: left;
-    padding: 6px 8px;
-    background: #f8fafc;
-    font-weight: 600;
-    font-size: 0.75rem;
-    border-bottom: 1px solid #e2e8f0;
-}
-.modal table td {
-    padding: 6px 8px;
-    border-bottom: 1px solid #f1f3f5;
-}
-.modal table tr:last-child td {
-    border-bottom: none;
-}
-
-/* 上传区域 */
-.upload-area {
-    border: 2px dashed #d1d5db;
-    border-radius: 6px;
-    padding: 24px;
-    text-align: center;
-    cursor: pointer;
-    transition: border-color 0.2s, background 0.2s;
-    background: #fafafa;
-    margin: 12px 0 16px;
-}
-.upload-area:hover {
-    border-color: #1e293b;
-    background: #f8fafc;
-}
-.upload-area input[type="file"] {
-    display: none;
-}
-.upload-area .upload-text {
-    color: #64748b;
-    font-size: 0.9rem;
-}
-
-/* 下单表格 */
-.order-table-wrap {
-    overflow-x: auto;
-}
-.order-table-wrap table {
-    width: 100%;
-    border-collapse: collapse;
-    background: #fff;
-    border-radius: 6px;
-    overflow: hidden;
-    border: 1px solid #e2e8f0;
-    font-size: 0.9rem;
-}
-.order-table-wrap table th {
-    background: #f8fafc;
-    padding: 8px 14px;
-    text-align: left;
-    font-weight: 600;
-    font-size: 0.75rem;
-    border-bottom: 1px solid #e2e8f0;
-}
-.order-table-wrap table td {
-    padding: 6px 14px;
-    border-bottom: 1px solid #f1f3f5;
-}
-.order-table-wrap table tr:hover td {
-    background: #f8fafc;
-}
-.order-table-wrap input[type="number"] {
-    width: 70px;
-    padding: 4px 8px;
-    border: 1px solid #d1d5db;
-    border-radius: 4px;
-    font-size: 0.9rem;
-}
-.order-table-wrap input[type="number"]:focus {
-    outline: none;
-    border-color: #1e293b;
-}
-
-.order-extra-fields {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 14px;
-    margin: 16px 0;
-    padding: 14px 16px;
-    background: #fff;
-    border-radius: 6px;
-    border: 1px solid #e2e8f0;
-}
-.order-extra-fields .field-group {
-    flex: 1 1 180px;
-}
-.order-extra-fields .field-group label {
-    display: block;
-    font-size: 0.8rem;
-    font-weight: 500;
-    color: #334155;
-    margin-bottom: 4px;
-}
-.order-extra-fields .field-group input {
-    width: 100%;
-    padding: 6px 10px;
-    border: 1px solid #d1d5db;
-    border-radius: 4px;
-    font-size: 0.9rem;
-}
-.order-extra-fields .field-group input:focus {
-    outline: none;
-    border-color: #1e293b;
-}
-
-.table-header-actions {
-    display: flex;
-    gap: 10px;
-    align-items: center;
-    flex-wrap: wrap;
-}
-
-/* 响应式 */
-@media (max-width: 768px) {
-    .login-container {
-        padding: 28px 20px;
-        max-width: 100%;
-    }
-    .sidebar {
-        width: 100%;
-        border-right: none;
-        border-bottom: 1px solid #e2e8f0;
-        padding: 8px 0;
-        display: flex;
-        flex-wrap: wrap;
-        gap: 4px;
-        justify-content: center;
-        background: #fff;
-        position: sticky;
-        top: 56px;
-        z-index: 10;
-    }
-    .sidebar .nav-item {
-        padding: 6px 14px;
-        margin: 2px 4px;
-        width: auto;
-        font-size: 0.8rem;
-    }
-    .sidebar .nav-section {
-        display: none;
-    }
-    .dashboard-body {
-        flex-direction: column;
-    }
-    .main-content {
-        padding: 16px;
-    }
-    .topbar {
-        padding: 0 16px;
-        flex-wrap: wrap;
-        height: auto;
-        min-height: 52px;
-        gap: 6px;
-    }
-    .topbar .user-info .company {
-        display: none;
-    }
-    .stats-grid {
-        grid-template-columns: 1fr 1fr;
-    }
-    .products-grid {
-        grid-template-columns: 1fr 1fr;
-    }
-    .table-wrapper {
-        overflow-x: auto;
-    }
-    .table-wrapper table {
-        font-size: 0.8rem;
-        min-width: 500px;
-    }
-    .modal {
-        margin: 16px;
-        padding: 20px;
-        max-width: 100%;
-    }
-    .accounts-grid {
-        grid-template-columns: 1fr;
-    }
-}
-@media (max-width: 480px) {
-    .stats-grid {
-        grid-template-columns: 1fr;
-    }
-    .products-grid {
-        grid-template-columns: 1fr;
-    }
-}
-
-        ::-webkit-scrollbar {
-            width: 6px;
-            height: 6px;
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background: #f5f6fa;
+            color: #1e293b;
+            min-height: 100vh;
         }
-        ::-webkit-scrollbar-track {
-            background: var(--gray-100);
+        .hidden {
+            display: none !important;
         }
-        ::-webkit-scrollbar-thumb {
-            background: var(--gray-300);
-            border-radius: 999px;
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 8px 20px;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background 0.2s, border-color 0.2s;
+            background: #fff;
+            color: #1e293b;
+            gap: 6px;
         }
-        ::-webkit-scrollbar-thumb:hover {
-            background: var(--gray-400);
+        .btn:hover {
+            background: #f1f3f5;
+        }
+        .btn-primary {
+            background: #1e293b;
+            color: #fff;
+            border-color: #1e293b;
+        }
+        .btn-primary:hover {
+            background: #334155;
+            border-color: #334155;
+        }
+        .btn-success {
+            background: #0b7e3d;
+            color: #fff;
+            border-color: #0b7e3d;
+        }
+        .btn-success:hover {
+            background: #0a6a33;
+            border-color: #0a6a33;
+        }
+        .btn-danger {
+            background: #b91c1c;
+            color: #fff;
+            border-color: #b91c1c;
+        }
+        .btn-danger:hover {
+            background: #991b1b;
+            border-color: #991b1b;
+        }
+        .btn-sm {
+            padding: 4px 12px;
+            font-size: 0.8rem;
+        }
+        .btn-outline {
+            background: transparent;
+            border-color: #d1d5db;
+        }
+        .btn-outline:hover {
+            background: #f1f3f5;
+        }
+        .badge {
+            display: inline-block;
+            padding: 2px 10px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            background: #e2e8f0;
+            color: #475569;
+        }
+        .badge-success {
+            background: #d1fae5;
+            color: #065f46;
+        }
+        .badge-warning {
+            background: #fef3c7;
+            color: #92400e;
+        }
+        .badge-danger {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+        .badge-info {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+        .card {
+            background: #fff;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+            padding: 20px 24px;
+        }
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #94a3b8;
+        }
+        /* 登录页 */
+        #loginPage {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            background: #f5f6fa;
+        }
+        .login-container {
+            width: 100%;
+            max-width: 400px;
+            background: #fff;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+            padding: 40px 36px;
+        }
+        .login-container h1 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+        .login-container .subtitle {
+            color: #64748b;
+            font-size: 0.9rem;
+            margin-bottom: 28px;
+        }
+        .form-group {
+            margin-bottom: 16px;
+        }
+        .form-group label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 500;
+            margin-bottom: 4px;
+            color: #334155;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            font-size: 0.95rem;
+            transition: border-color 0.2s;
+            background: #fff;
+        }
+        .form-group input:focus {
+            outline: none;
+            border-color: #1e293b;
+        }
+        .login-btn {
+            width: 100%;
+            padding: 10px;
+            font-size: 1rem;
+            margin-top: 6px;
+        }
+        .error-msg {
+            color: #b91c1c;
+            font-size: 0.85rem;
+            margin-top: 10px;
+            min-height: 24px;
+        }
+        .login-brand {
+            text-align: center;
+            margin-bottom: 24px;
+        }
+        .login-brand .name {
+            font-size: 1.6rem;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+        /* 仪表板 */
+        #dashboardPage {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            background: #f5f6fa;
+        }
+        .topbar {
+            background: #fff;
+            padding: 0 24px;
+            height: 56px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid #e2e8f0;
+            flex-shrink: 0;
+        }
+        .topbar .left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        .topbar .brand {
+            font-size: 1.1rem;
+            font-weight: 700;
+        }
+        .topbar .brand .highlight {
+            color: #1e293b;
+        }
+        .topbar .role-badge {
+            font-size: 0.7rem;
+            padding: 2px 12px;
+            border-radius: 12px;
+            font-weight: 500;
+            background: #e2e8f0;
+            color: #475569;
+        }
+        .role-badge-supplier {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+        .role-badge-customer {
+            background: #d1fae5;
+            color: #065f46;
+        }
+        .topbar .right {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+        .topbar .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.9rem;
+        }
+        .topbar .user-info .avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: #1e293b;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 0.8rem;
+        }
+        .topbar .user-info .name {
+            font-weight: 500;
+        }
+        .topbar .user-info .company {
+            color: #94a3b8;
+            font-size: 0.8rem;
+        }
+        .dashboard-body {
+            display: flex;
+            flex: 1;
+            min-height: 0;
+        }
+        .sidebar {
+            width: 180px;
+            background: #fff;
+            border-right: 1px solid #e2e8f0;
+            padding: 16px 0;
+            flex-shrink: 0;
+            overflow-y: auto;
+        }
+        .sidebar .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 20px;
+            margin: 2px 10px;
+            border-radius: 6px;
+            color: #64748b;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background 0.2s, color 0.2s;
+            border: none;
+            background: transparent;
+            width: calc(100% - 20px);
+        }
+        .sidebar .nav-item:hover {
+            background: #f1f3f5;
+            color: #1e293b;
+        }
+        .sidebar .nav-item.active {
+            background: #1e293b;
+            color: #fff;
+        }
+        .sidebar .nav-item .notification-dot {
+            background: #b91c1c;
+            color: #fff;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            font-size: 0.65rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-left: auto;
+        }
+        .sidebar .nav-section {
+            padding: 8px 20px 4px;
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #94a3b8;
+            font-weight: 600;
+        }
+        .main-content {
+            flex: 1;
+            padding: 20px 28px;
+            overflow-y: auto;
+            background: #f5f6fa;
+        }
+        .main-content .page-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+        .main-content .page-subtitle {
+            color: #94a3b8;
+            font-size: 0.9rem;
+            margin-bottom: 20px;
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        .stat-card {
+            background: #fff;
+            padding: 16px 20px;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+        }
+        .stat-card .stat-label {
+            font-size: 0.75rem;
+            color: #94a3b8;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            font-weight: 500;
+        }
+        .stat-card .stat-value {
+            font-size: 1.6rem;
+            font-weight: 600;
+            margin-top: 2px;
+        }
+        .table-wrapper {
+            background: #fff;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+            overflow: hidden;
+        }
+        .table-wrapper .table-header {
+            padding: 12px 20px;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .table-wrapper .table-header h3 {
+            font-size: 0.95rem;
+            font-weight: 600;
+        }
+        .table-wrapper table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+        }
+        .table-wrapper table th {
+            text-align: left;
+            padding: 10px 16px;
+            background: #f8fafc;
+            font-weight: 600;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            color: #64748b;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        .table-wrapper table td {
+            padding: 10px 16px;
+            border-bottom: 1px solid #f1f3f5;
+            color: #334155;
+        }
+        .table-wrapper table tr:last-child td {
+            border-bottom: none;
+        }
+        .table-wrapper table tr:hover td {
+            background: #f8fafc;
+        }
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 12px;
+            margin-top: 12px;
+        }
+        .product-card {
+            background: #fff;
+            border-radius: 8px;
+            padding: 16px;
+            border: 1px solid #e2e8f0;
+            text-align: center;
+            transition: border-color 0.2s;
+        }
+        .product-card:hover {
+            border-color: #94a3b8;
+        }
+        .product-card .product-code {
+            font-size: 0.75rem;
+            color: #94a3b8;
+            font-family: monospace;
+        }
+        .product-card .product-short {
+            font-weight: 600;
+            font-size: 1rem;
+            margin: 4px 0 2px;
+        }
+        .product-card .product-full {
+            font-size: 0.8rem;
+            color: #64748b;
+            margin-bottom: 4px;
+        }
+        .product-card .product-supplier {
+            font-size: 0.7rem;
+            color: #94a3b8;
+        }
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 999;
+            padding: 20px;
+        }
+        .modal {
+            background: #fff;
+            border-radius: 8px;
+            max-width: 560px;
+            width: 100%;
+            padding: 28px 32px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        .modal h2 {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+        .modal .modal-sub {
+            color: #64748b;
+            font-size: 0.9rem;
+            margin-bottom: 16px;
+        }
+        .modal .form-group {
+            margin-bottom: 14px;
+        }
+        .modal .form-group label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 500;
+            margin-bottom: 4px;
+            color: #334155;
+        }
+        .modal .form-group input,
+        .modal .form-group textarea,
+        .modal .form-group select {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            background: #fff;
+            font-family: inherit;
+        }
+        .modal .form-group input:focus,
+        .modal .form-group textarea:focus,
+        .modal .form-group select:focus {
+            outline: none;
+            border-color: #1e293b;
+        }
+        .modal .form-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 18px;
+            justify-content: flex-end;
+        }
+        .modal .form-actions .btn {
+            flex: 1;
+        }
+        .modal table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+            font-size: 0.9rem;
+        }
+        .modal table th {
+            text-align: left;
+            padding: 6px 8px;
+            background: #f8fafc;
+            font-weight: 600;
+            font-size: 0.75rem;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        .modal table td {
+            padding: 6px 8px;
+            border-bottom: 1px solid #f1f3f5;
+        }
+        .modal table tr:last-child td {
+            border-bottom: none;
+        }
+        .upload-area {
+            border: 2px dashed #d1d5db;
+            border-radius: 6px;
+            padding: 24px;
+            text-align: center;
+            cursor: pointer;
+            transition: border-color 0.2s, background 0.2s;
+            background: #fafafa;
+            margin: 12px 0 16px;
+        }
+        .upload-area:hover {
+            border-color: #1e293b;
+            background: #f8fafc;
+        }
+        .upload-area input[type="file"] {
+            display: none;
+        }
+        .upload-area .upload-text {
+            color: #64748b;
+            font-size: 0.9rem;
+        }
+        .order-table-wrap {
+            overflow-x: auto;
+        }
+        .order-table-wrap table {
+            width: 100%;
+            border-collapse: collapse;
+            background: #fff;
+            border-radius: 6px;
+            overflow: hidden;
+            border: 1px solid #e2e8f0;
+            font-size: 0.9rem;
+        }
+        .order-table-wrap table th {
+            background: #f8fafc;
+            padding: 8px 14px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 0.75rem;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        .order-table-wrap table td {
+            padding: 6px 14px;
+            border-bottom: 1px solid #f1f3f5;
+        }
+        .order-table-wrap table tr:hover td {
+            background: #f8fafc;
+        }
+        .order-table-wrap input[type="number"] {
+            width: 70px;
+            padding: 4px 8px;
+            border: 1px solid #d1d5db;
+            border-radius: 4px;
+            font-size: 0.9rem;
+        }
+        .order-table-wrap input[type="number"]:focus {
+            outline: none;
+            border-color: #1e293b;
+        }
+        .order-extra-fields {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 14px;
+            margin: 16px 0;
+            padding: 14px 16px;
+            background: #fff;
+            border-radius: 6px;
+            border: 1px solid #e2e8f0;
+        }
+        .order-extra-fields .field-group {
+            flex: 1 1 180px;
+        }
+        .order-extra-fields .field-group label {
+            display: block;
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: #334155;
+            margin-bottom: 4px;
+        }
+        .order-extra-fields .field-group input {
+            width: 100%;
+            padding: 6px 10px;
+            border: 1px solid #d1d5db;
+            border-radius: 4px;
+            font-size: 0.9rem;
+        }
+        .order-extra-fields .field-group input:focus {
+            outline: none;
+            border-color: #1e293b;
+        }
+        .table-header-actions {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        /* 备料计划专用表格 */
+        .stock-plan-table input[type="number"] {
+            width: 100px;
+            padding: 4px 8px;
+            border: 1px solid #d1d5db;
+            border-radius: 4px;
+            font-size: 0.9rem;
+        }
+        .stock-plan-table input[type="number"]:focus {
+            outline: none;
+            border-color: #1e293b;
+        }
+        @media (max-width: 768px) {
+            .login-container {
+                padding: 28px 20px;
+                max-width: 100%;
+            }
+            .sidebar {
+                width: 100%;
+                border-right: none;
+                border-bottom: 1px solid #e2e8f0;
+                padding: 8px 0;
+                display: flex;
+                flex-wrap: wrap;
+                gap: 4px;
+                justify-content: center;
+                background: #fff;
+                position: sticky;
+                top: 56px;
+                z-index: 10;
+            }
+            .sidebar .nav-item {
+                padding: 6px 14px;
+                margin: 2px 4px;
+                width: auto;
+                font-size: 0.8rem;
+            }
+            .sidebar .nav-section {
+                display: none;
+            }
+            .dashboard-body {
+                flex-direction: column;
+            }
+            .main-content {
+                padding: 16px;
+            }
+            .topbar {
+                padding: 0 16px;
+                flex-wrap: wrap;
+                height: auto;
+                min-height: 52px;
+                gap: 6px;
+            }
+            .topbar .user-info .company {
+                display: none;
+            }
+            .stats-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+            .products-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+            .table-wrapper {
+                overflow-x: auto;
+            }
+            .table-wrapper table {
+                font-size: 0.8rem;
+                min-width: 500px;
+            }
+            .modal {
+                margin: 16px;
+                padding: 20px;
+                max-width: 100%;
+            }
+            .stock-plan-table input[type="number"] {
+                width: 70px;
+            }
+        }
+        @media (max-width: 480px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            .products-grid {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
 <body>
-
-    <!-- ============================================================ -->
-    <!-- 登录页面 -->
-    <!-- ============================================================ -->
+    <!-- ====== 登录页 ====== -->
     <div id="loginPage">
         <div class="login-container">
-            <div class="login-left">
-                <div class="logo">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--primary);">
-                        <path d="M12 2L2 7l10 5 10-5-10-5z" />
-                        <path d="M2 17l10 5 10-5" />
-                        <path d="M2 12l10 5 10-5" />
-                    </svg>
-                    <span>协同<span class="highlight">链</span></span>
-                </div>
-                <h1>欢迎回来</h1>
-                <p class="subtitle">登录您的账号以访问供应链协同平台</p>
-                <form id="loginForm" autocomplete="off">
-                    <div class="form-group">
-                        <label for="username">账号</label>
-                        <input type="text" id="username" placeholder="请输入账号" value="supplier1" />
-                    </div>
-                    <div class="form-group">
-                        <label for="password">密码</label>
-                        <input type="password" id="password" placeholder="请输入密码" value="123456" />
-                    </div>
-                    <button type="submit" class="btn btn-primary login-btn">登 录</button>
-                    <div class="error-msg" id="loginError"></div>
-                </form>
+            <div class="login-brand">
+                <div class="name">协同<span style="color:#1e293b;">链</span></div>
             </div>
+            <h1>登录</h1>
+            <p class="subtitle">供应链协同平台</p>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="username">账号</label>
+                    <input type="text" id="username" value="supplier1" />
+                </div>
+                <div class="form-group">
+                    <label for="password">密码</label>
+                    <input type="password" id="password" value="123456" />
+                </div>
+                <button type="submit" class="btn btn-primary login-btn">登录</button>
+                <div class="error-msg" id="loginError"></div>
+            </form>
         </div>
     </div>
 
-    <!-- ============================================================ -->
-    <!-- 仪表板页面 -->
-    <!-- ============================================================ -->
+    <!-- ====== 仪表板 ====== -->
     <div id="dashboardPage" class="hidden">
         <header class="topbar">
             <div class="left">
-                <div class="brand">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--primary); width:28px; height:28px;">
-                        <path d="M12 2L2 7l10 5 10-5-10-5z" />
-                        <path d="M2 17l10 5 10-5" />
-                        <path d="M2 12l10 5 10-5" />
-                    </svg>
-                    协同<span class="highlight">链</span>
-                </div>
+                <div class="brand">协同<span class="highlight">链</span></div>
                 <span class="role-badge" id="roleBadge">供应商</span>
             </div>
             <div class="right">
                 <div class="user-info">
                     <div class="avatar" id="userAvatar">S</div>
                     <div>
-                        <div class="name" id="userDisplayName">供应商A</div>
+                        <div class="name" id="userDisplayName">供应商</div>
                         <div class="company" id="userCompany">江门中远海运铝业</div>
                     </div>
                 </div>
@@ -892,27 +759,20 @@ body {
         </div>
     </div>
 
-    <!-- ============================================================ -->
-    <!-- 模态框容器 -->
-    <!-- ============================================================ -->
+    <!-- ====== 模态框容器 ====== -->
     <div id="modalContainer"></div>
 
-    <!-- ============================================================ -->
-    <!-- JavaScript（所有代码都在常规 <script> 中） -->
-    <!-- ============================================================ -->
     <script>
         // ============================================================
-        // Supabase 配置 - 请替换成你的
+        // Supabase 配置（请替换成你自己的）
         // ============================================================
-        const SUPABASE_URL = 'https://whpmzscafgiloazdfjas.supabase.co'; // 你的项目 URL
-        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndocG16c2NhZmdpbG9hemRmamFzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODY5MTMwMjcsImV4cCI6MjEwMjQ4OTAyN30.q5JGYqmeMVI2ykQ7u4PzwtPotF6EpSzG5yocyJAOofQ'; // 你的 anon key
-
-        // 创建客户端（避免全局变量冲突）
+        const SUPABASE_URL = 'https://whpmzscafgiloazdfjas.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndocG16c2NhZmdpbG9hemRmamFzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODY5MTMwMjcsImV4cCI6MjEwMjQ4OTAyN30.q5JGYqmeMVI2ykQ7u4PzwtPotF6EpSzG5yocyJAOofQ';
         const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
         console.log('✅ Supabase 客户端已初始化');
 
         // ============================================================
-        // 用户数据（硬编码测试）
+        // 用户数据（硬编码）
         // ============================================================
         const USERS = [{
             username: 'supplier1',
@@ -928,9 +788,6 @@ body {
             company: '卓锐'
         }];
 
-        // ============================================================
-        // 全局状态
-        // ============================================================
         let currentUser = null;
         let currentNav = 'overview';
 
@@ -953,8 +810,10 @@ body {
         const modalContainer = document.getElementById('modalContainer');
 
         // ============================================================
-        // 数据操作（Supabase）
+        // 数据操作函数
         // ============================================================
+
+        // ---- 产品 ----
         async function getProducts() {
             const { data, error } = await supabaseClient.from('products').select('*');
             if (error) { console.error(error); return []; }
@@ -962,128 +821,233 @@ body {
         }
 
         async function replaceProductsForSupplier(supplier, products) {
-    console.log('开始替换产品，供应商:', supplier, '产品数:', products.length);
-    try {
-        // 删除旧产品
-        const { error: delError } = await supabaseClient.from('products').delete().eq('supplier', supplier);
-        if (delError) {
-            console.error('删除失败:', delError);
-            throw delError;
+            console.log('替换产品:', supplier, products.length);
+            try {
+                await supabaseClient.from('products').delete().eq('supplier', supplier);
+                if (products.length === 0) return;
+                const insert = products.map(p => ({
+                    id: Math.floor(Date.now() + Math.random() * 1000000),
+                    code: p.code,
+                    short_name: p.shortName,
+                    full_name: p.fullName,
+                    supplier: supplier
+                }));
+                const { error } = await supabaseClient.from('products').insert(insert);
+                if (error) throw error;
+            } catch (err) { throw err; }
         }
-        console.log('✅ 删除成功');
 
-        if (products.length === 0) return;
-
-        // 准备插入数据
-        const insert = products.map(p => ({
-            id: Math.floor(Date.now() + Math.random() * 1000000), // 确保整数
-            code: p.code,
-            short_name: p.shortName,
-            full_name: p.fullName,
-            supplier: supplier
-        }));
-
-        console.log('待插入数据（前3条）:', insert.slice(0, 3));
-
-        // 🔥 关键：捕获插入结果
-        const { data, error: insError } = await supabaseClient.from('products').insert(insert);
-        if (insError) {
-            console.error('❌ 插入失败，完整错误:', insError);
-            if (insError.details) console.error('详情:', insError.details);
-            if (insError.hint) console.error('提示:', insError.hint);
-            throw insError;
+        async function deleteProductById(productId) {
+            const { error } = await supabaseClient.from('products').delete().eq('id', productId);
+            if (error) throw error;
         }
-        console.log('✅ 插入成功，返回数据条数:', data ? data.length : 0);
-    } catch (err) {
-        console.error('❌ replaceProductsForSupplier 出错:', err);
-        throw err; // 让上层捕获
-    }
-}
 
+        // ---- 订单 ----
         async function getOrders() {
             const { data, error } = await supabaseClient.from('orders').select('*');
             if (error) { console.error(error); return []; }
             return data || [];
         }
 
+        async function createOrder(orderData) {
+            const { error } = await supabaseClient.from('orders').insert([orderData]);
+            if (error) throw error;
+            return orderData;
+        }
+
+        // ---- 备料计划 ----
+        async function getStockPlans(supplier) {
+            const { data, error } = await supabaseClient
+                .from('stock_plans')
+                .select('*')
+                .eq('supplier', supplier);
+            if (error) { console.error(error); return []; }
+            return data || [];
+        }
+
+        // 批量更新备料计划（根据产品列表和对应数量）
+        async function batchUpdateStockPlans(supplier, planMap) {
+            // planMap: { productCode: quantity }
+            // 先获取现有计划
+            const existing = await getStockPlans(supplier);
+            const existingMap = {};
+            existing.forEach(p => { existingMap[p.product_code] = p; });
+
+            const operations = [];
+            for (const [code, qty] of Object.entries(planMap)) {
+                const finalQty = Math.max(0, parseInt(qty) || 0);
+                if (finalQty === 0) {
+                    // 数量为0则删除
+                    if (existingMap[code]) {
+                        operations.push(
+                            supabaseClient.from('stock_plans').delete().eq('id', existingMap[code].id)
+                        );
+                    }
+                } else {
+                    if (existingMap[code]) {
+                        // 更新
+                        operations.push(
+                            supabaseClient.from('stock_plans')
+                            .update({ quantity: finalQty, updated_at: new Date() })
+                            .eq('id', existingMap[code].id)
+                        );
+                    } else {
+                        // 新增
+                        const newId = Math.floor(Date.now() + Math.random() * 1000000);
+                        // 获取产品名称
+                        const product = (await getProducts()).find(p => p.code === code);
+                        const name = product ? product.full_name : code;
+                        operations.push(
+                            supabaseClient.from('stock_plans').insert([{
+                                id: newId,
+                                product_code: code,
+                                product_name: name,
+                                quantity: finalQty,
+                                supplier: supplier,
+                                created_at: new Date(),
+                                updated_at: new Date()
+                            }])
+                        );
+                    }
+                }
+            }
+            // 执行所有操作
+            for (const op of operations) {
+                const { error } = await op;
+                if (error) throw error;
+            }
+        }
+
+        // ---- 订单匹配备料计划（客户下单时调用） ----
+        async function matchStockPlan(orderItems, customer, supplier, deliveryDate, note, forecastOrderId) {
+            // 获取当前备料计划
+            const plans = await getStockPlans(supplier);
+            const planMap = {};
+            plans.forEach(p => { planMap[p.product_code] = p.quantity; });
+
+            const planItems = [];
+            const extraItems = [];
+            const updates = {};
+
+            for (let item of orderItems) {
+                const code = item.code;
+                const orderQty = item.quantity;
+                const planQty = planMap[code] || 0;
+
+                if (planQty > 0) {
+                    const consume = Math.min(orderQty, planQty);
+                    // 消耗备料
+                    planMap[code] = planQty - consume;
+                    updates[code] = planMap[code];
+                    planItems.push({
+                        productCode: code,
+                        productShort: item.shortName,
+                        productFull: item.fullName,
+                        quantity: consume
+                    });
+                    if (orderQty > consume) {
+                        extraItems.push({
+                            productCode: code,
+                            productShort: item.shortName,
+                            productFull: item.fullName,
+                            quantity: orderQty - consume
+                        });
+                    }
+                } else {
+                    extraItems.push({
+                        productCode: code,
+                        productShort: item.shortName,
+                        productFull: item.fullName,
+                        quantity: orderQty
+                    });
+                }
+            }
+
+            // 更新备料计划（将 planMap 中的新数量写回）
+            for (const [code, qty] of Object.entries(planMap)) {
+                if (qty === 0) {
+                    // 删除
+                    const existing = plans.find(p => p.product_code === code);
+                    if (existing) {
+                        await supabaseClient.from('stock_plans').delete().eq('id', existing.id);
+                    }
+                } else {
+                    const existing = plans.find(p => p.product_code === code);
+                    if (existing) {
+                        await supabaseClient.from('stock_plans')
+                            .update({ quantity: qty, updated_at: new Date() })
+                            .eq('id', existing.id);
+                    } else {
+                        // 如果 planMap 中有但原计划无，则新增（但不会发生）
+                    }
+                }
+            }
+
+            const generatedOrders = [];
+
+            // 生成计划内订单
+            if (planItems.length > 0) {
+                const planOrder = {
+                    id: 'ORD-PLAN-' + new Date().toISOString().slice(0, 10) + '-' + Date.now().toString().slice(-6),
+                    supplier: supplier,
+                    customer: customer,
+                    items: planItems,
+                    delivery_date: deliveryDate,
+                    note: (note || '') + ' [来自备料计划, 预测单:' + forecastOrderId + ']',
+                    status: '待确认',
+                    response_note: '',
+                    order_date: new Date().toISOString().slice(0, 10),
+                    read: false
+                };
+                await createOrder(planOrder);
+                generatedOrders.push(planOrder);
+            }
+
+            // 生成计划外订单
+            if (extraItems.length > 0) {
+                const extraOrder = {
+                    id: 'ORD-EXTRA-' + new Date().toISOString().slice(0, 10) + '-' + Date.now().toString().slice(-6),
+                    supplier: supplier,
+                    customer: customer,
+                    items: extraItems,
+                    delivery_date: deliveryDate,
+                    note: (note || '') + ' [计划外, 预测单:' + forecastOrderId + ']',
+                    status: '待确认',
+                    response_note: '',
+                    order_date: new Date().toISOString().slice(0, 10),
+                    read: false
+                };
+                await createOrder(extraOrder);
+                generatedOrders.push(extraOrder);
+            }
+
+            return generatedOrders;
+        }
+
+        // 新的 addOrder 调用 matchStockPlan
         async function addOrder(items, deliveryDate, note, customer, supplier) {
             const valid = items.filter(i => i.quantity > 0);
             if (valid.length === 0) return null;
-            const newOrder = {
-                id: 'ORD-' + new Date().toISOString().slice(0, 10) + '-' + Date.now().toString().slice(-6),
+
+            // 1. 插入预测订单
+            const forecastOrder = {
+                id: 'FCAST-' + new Date().toISOString().slice(0, 10) + '-' + Date.now().toString().slice(-6),
                 supplier: supplier,
                 customer: customer,
                 items: valid.map(i => ({ productCode: i.code, productShort: i.shortName, productFull: i.fullName,
                     quantity: i.quantity })),
                 delivery_date: deliveryDate,
-                note: note || '',
-                status: '待确认',
+                note: (note || '') + ' [预测订单]',
+                status: '已处理',
                 response_note: '',
                 order_date: new Date().toISOString().slice(0, 10),
                 read: false
             };
-            const { error } = await supabaseClient.from('orders').insert([newOrder]);
-            if (error) throw error;
-            return newOrder;
-        }
+            await createOrder(forecastOrder);
 
-        async function updateOrder(orderId, newItems, deliveryDate, note) {
-            const { error } = await supabaseClient
-                .from('orders')
-                .update({
-                    items: newItems,
-                    delivery_date: deliveryDate,
-                    note: note || ''
-                })
-                .eq('id', orderId);
-            if (error) throw error;
-        }
-
-        async function respondOrder(orderId, status, responseNote) {
-            const { error } = await supabaseClient
-                .from('orders')
-                .update({ status, response_note: responseNote || '' })
-                .eq('id', orderId)
-                .eq('status', '待确认');
-            if (error) throw error;
-            return true;
-        }
-
-        async function markOrderRead(orderId) {
-            await supabaseClient.from('orders').update({ read: true }).eq('id', orderId);
-        }
-
-        async function getUnreadCount(supplier) {
-            const { count, error } = await supabaseClient
-                .from('orders')
-                .select('id', { count: 'exact', head: true })
-                .eq('supplier', supplier)
-                .eq('status', '待确认')
-                .eq('read', false);
-            if (error) return 0;
-            return count || 0;
-        }
-
-        // ============================================================
-        // 工具
-        // ============================================================
-        function getStatusBadge(status) {
-            const map = {
-                '待确认': 'badge-warning',
-                '已同意': 'badge-success',
-                '已拒绝': 'badge-danger',
-                '已完成': 'badge-success',
-                '配送中': 'badge-info',
-                '待审核': 'badge-warning',
-                '待付款': 'badge-danger'
-            };
-            return map[status] || 'badge-secondary';
-        }
-
-        function getMinDeliveryDate() {
-            const d = new Date();
-            d.setDate(d.getDate() + 28);
-            return d.toISOString().slice(0, 10);
+            // 2. 执行备料匹配
+            const planOrders = await matchStockPlan(valid, customer, supplier, deliveryDate, note, forecastOrder.id);
+            return planOrders;
         }
 
         // ============================================================
@@ -1093,24 +1057,23 @@ body {
             const isSupplier = user.role === 'supplier';
             const unread = isSupplier ? await getUnreadCount(user.company) : 0;
             const navItems = isSupplier ? [
-                { id: 'overview', icon: '📊', label: '总览' },
-                { id: 'orders', icon: '📦', label: '订单管理' },
-                { id: 'products', icon: '📋', label: '产品管理' },
+                { id: 'overview', label: '总览' },
+                { id: 'orders', label: '订单管理' },
+                { id: 'products', label: '产品管理' },
+                { id: 'stockplans', label: '备料计划' }
             ] : [
-                { id: 'overview', icon: '📊', label: '总览' },
-                { id: 'orders', icon: '📦', label: '我的订单' },
-                { id: 'products', icon: '🛒', label: '下单采购' },
+                { id: 'overview', label: '总览' },
+                { id: 'orders', label: '我的订单' },
+                { id: 'products', label: '下单采购' },
             ];
-            let html = `<div class="nav-section">${isSupplier ? '供应商' : '客户'}菜单</div>`;
+            let html = `<div class="nav-section">${isSupplier ? '供应商' : '客户'}</div>`;
             navItems.forEach(item => {
                 const active = item.id === currentNav ? 'active' : '';
                 let notification = '';
                 if (item.id === 'orders' && unread > 0) {
                     notification = `<span class="notification-dot">${unread}</span>`;
                 }
-                html += `<button class="nav-item ${active}" data-nav="${item.id}">
-                    <span class="icon">${item.icon}</span> ${item.label} ${notification}
-                </button>`;
+                html += `<button class="nav-item ${active}" data-nav="${item.id}">${item.label}${notification}</button>`;
             });
             sidebar.innerHTML = html;
 
@@ -1136,14 +1099,15 @@ body {
             let allOrders = await getOrders();
             let allProducts = await getProducts();
 
-            const orders = allOrders.filter(o =>
+            // 过滤预测订单
+            const actualOrders = allOrders.filter(o => !o.note.includes('[预测订单]'));
+            const orders = actualOrders.filter(o =>
                 isSupplier ? o.supplier === user.company : o.customer === user.company
             );
             const products = isSupplier ?
                 allProducts.filter(p => p.supplier === user.company) :
                 allProducts;
 
-            // 统计
             const statusCount = {};
             orders.forEach(o => { statusCount[o.status] = (statusCount[o.status] || 0) + 1; });
             const pendingCount = (statusCount['待确认'] || 0) + (statusCount['待审核'] || 0) + (statusCount['待付款'] || 0);
@@ -1153,19 +1117,20 @@ body {
 
             if (currentNav === 'overview') {
                 html = `
-                    <div class="fade-in">
-                        <h1 class="page-title">👋 您好，${user.name}</h1>
+                    <div>
+                        <h1 class="page-title">您好，${user.name}</h1>
+                        <p class="page-subtitle">供应链协同平台</p>
                         <div class="stats-grid">
                             <div class="stat-card"><div class="stat-label">订单总数</div><div class="stat-value">${orders.length}</div></div>
                             <div class="stat-card"><div class="stat-label">产品数</div><div class="stat-value">${products.length}</div></div>
                             <div class="stat-card"><div class="stat-label">待处理</div><div class="stat-value">${pendingCount}</div></div>
-                            ${isSupplier ? `<div class="stat-card"><div class="stat-label">新订单通知</div><div class="stat-value">${unreadCount}</div></div>` : ''}
+                            ${isSupplier ? `<div class="stat-card"><div class="stat-label">新订单</div><div class="stat-value">${unreadCount}</div></div>` : ''}
                         </div>
                         <div class="table-wrapper">
                             <div class="table-header"><h3>最近订单</h3></div>
                             ${orders.length === 0 ? '<div class="empty-state">暂无订单</div>' : `
                                 <table>
-                                    <thead><tr><th>订单号</th><th>${isSupplier?'客户':'供应商'}</th><th>产品项数</th><th>总数量</th><th>交期</th><th>状态</th><th>日期</th><th>操作</th></tr></thead>
+                                    <thead><tr><th>订单号</th><th>${isSupplier?'客户':'供应商'}</th><th>产品项数</th><th>总数量</th><th>交期</th><th>状态</th><th>日期</th><th></th></tr></thead>
                                     <tbody>
                                     ${orders.slice(0,5).map(o => {
                                         const total = o.items ? o.items.reduce((s,i) => s+i.quantity, 0) : 0;
@@ -1177,7 +1142,7 @@ body {
                                             <td>${o.delivery_date || '-'}</td>
                                             <td><span class="badge ${getStatusBadge(o.status)}">${o.status}</span></td>
                                             <td>${o.order_date || '-'}</td>
-                                            <td><button class="btn btn-outline btn-sm view-detail-btn" data-orderid="${o.id}">明细</button></td>
+                                            <td><button class="btn btn-outline btn-sm view-detail-btn" data-orderid="${o.id}">查看</button></td>
                                         </tr>`;
                                     }).join('')}
                                     </tbody>
@@ -1187,117 +1152,16 @@ body {
                     </div>
                 `;
             } else if (currentNav === 'orders') {
-                // 订单管理表格
-            function renderOrderTable(orders, isSupplier) {
-    let html = `
-        <div class="fade-in">
-            <h1 class="page-title">📦 ${isSupplier ? '订单管理' : '我的订单'}</h1>
-            <p class="page-subtitle">${isSupplier ? '可同意/拒绝/删除' : '查看订单，待确认可编辑'}</p>
-            <div class="table-wrapper">
-                <div class="table-header">
-                    <h3>${isSupplier ? '全部订单' : '我的采购订单'}</h3>
-                    ${isSupplier ? `<button class="btn btn-primary btn-sm" id="exportOrdersBtn">📥 导出</button>` : ''}
-                </div>
-                ${orders.length === 0 ? '<div class="empty-state">暂无订单</div>' : `
-                    <table>
-                        <thead><tr>
-                            <th>订单号</th><th>${isSupplier ? '客户' : '供应商'}</th>
-                            <th>产品项数</th><th>总数量</th><th>交期</th><th>状态</th><th>反馈</th><th>日期</th><th>操作</th>
-                        </tr></thead>
-                        <tbody>
-                        ${orders.map(o => {
-                            const total = o.items ? o.items.reduce((s,i) => s+i.quantity, 0) : 0;
-                            const canEdit = !isSupplier && o.status === '待确认';
-                            return `<tr>
-                                <td>${o.id}</td>
-                                <td>${isSupplier ? o.customer : o.supplier}</td>
-                                <td>${o.items ? o.items.length : 0}</td>
-                                <td>${total}</td>
-                                <td>${o.delivery_date || '-'}</td>
-                                <td><span class="badge ${getStatusBadge(o.status)}">${o.status}</span></td>
-                                <td>${o.response_note || '-'}</td>
-                                <td>${o.order_date || '-'}</td>
-                                <td>
-                                    <button class="btn btn-outline btn-sm view-detail-btn" data-orderid="${o.id}">查看</button>
-                                    ${isSupplier && o.status === '待确认' ? `
-                                        <button class="btn btn-success btn-sm respond-btn" data-orderid="${o.id}" data-action="agree">同意</button>
-                                        <button class="btn btn-danger btn-sm respond-btn" data-orderid="${o.id}" data-action="reject">拒绝</button>
-                                    ` : ''}
-                                    ${canEdit ? `<button class="btn btn-primary btn-sm edit-order-btn" data-orderid="${o.id}">编辑</button>` : ''}
-                                    ${isSupplier ? `
-                                        <button class="btn btn-outline btn-sm delete-order-btn" data-orderid="${o.id}" style="color:#b91c1c;border-color:#b91c1c;">删除</button>
-                                    ` : ''}
-                                </td>
-                            </tr>`;
-                        }).join('')}
-                        </tbody>
-                    </table>
-                `}
-            </div>
-        </div>
-    `;
-    mainContent.innerHTML = html;
-
-    // --- 事件绑定（原有） ---
-    const exportBtn = document.getElementById('exportOrdersBtn');
-    if (exportBtn) exportBtn.addEventListener('click', () => exportOrders(orders));
-
-    document.querySelectorAll('.view-detail-btn').forEach(btn => {
-        btn.addEventListener('click', function() {
-            const order = orders.find(o => o.id === this.dataset.orderid);
-            if (order) showOrderDetail(order);
-        });
-    });
-
-    document.querySelectorAll('.respond-btn').forEach(btn => {
-        btn.addEventListener('click', function() {
-            openResponseModal(this.dataset.orderid, this.dataset.action);
-        });
-    });
-
-    document.querySelectorAll('.edit-order-btn').forEach(btn => {
-        btn.addEventListener('click', function() {
-            const order = orders.find(o => o.id === this.dataset.orderid);
-            if (order) openEditOrderModal(order);
-        });
-    });
-
-    // --- 新增：删除订单事件 ---
-    document.querySelectorAll('.delete-order-btn').forEach(btn => {
-        btn.addEventListener('click', async function() {
-            const orderId = this.dataset.orderid;
-            if (!confirm(`确定要删除订单 ${orderId} 吗？此操作不可撤销！`)) return;
-            try {
-                const { error } = await supabaseClient
-                    .from('orders')
-                    .delete()
-                    .eq('id', orderId);
-                if (error) throw error;
-                alert('订单已删除');
-                // 刷新订单列表
-                const freshOrders = await getOrders();
-                const userOrders = freshOrders.filter(o => 
-                    currentUser.role === 'supplier' ? o.supplier === currentUser.company : o.customer === currentUser.company
-                );
-                renderOrderTable(userOrders, currentUser.role === 'supplier');
-                await renderSidebar(currentUser);
-            } catch (err) {
-                alert('删除失败: ' + err.message);
-            }
-        });
-    });
-}
-                
+                renderOrderTable(orders, isSupplier);
                 return;
             } else if (currentNav === 'products') {
-                // 产品管理或下单采购
                 if (isSupplier) {
                     html = `
-                        <div class="fade-in">
-                            <h1 class="page-title">📋 产品管理</h1>
+                        <div>
+                            <h1 class="page-title">产品管理</h1>
+                            <p class="page-subtitle">上传Excel导入产品（物料编码, 简称, 全称）</p>
                             <div class="upload-area" id="uploadArea">
-                                <span class="upload-icon">📤</span>
-                                <div class="upload-text">点击上传Excel（编码,简称,全称）</div>
+                                <div class="upload-text">点击上传 Excel 文件</div>
                                 <input type="file" id="fileInput" accept=".xlsx,.xls" />
                             </div>
                             ${products.length === 0 ? '<div class="empty-state">暂无产品</div>' : `
@@ -1308,9 +1172,7 @@ body {
                                             <div class="product-short">${p.short_name}</div>
                                             <div class="product-full">${p.full_name}</div>
                                             <div class="product-supplier">${p.supplier}</div>
-                                            ${isSupplier ? `
-                                                <button class="btn btn-danger btn-sm delete-product-btn" data-product-id="${p.id}" style="margin-top:8px;width:100%;">删除</button>
-                                            ` : ''}
+                                            <button class="btn btn-danger btn-sm delete-product-btn" data-product-id="${p.id}" style="margin-top:8px;width:100%;">删除</button>
                                         </div>
                                     `).join('')}
                                 </div>
@@ -1321,35 +1183,27 @@ body {
                     document.getElementById('uploadArea')?.addEventListener('click', () => document.getElementById('fileInput')
                         .click());
                     document.getElementById('fileInput')?.addEventListener('change', handleFileUpload);
-
                     document.querySelectorAll('.delete-product-btn').forEach(btn => {
                         btn.addEventListener('click', async function() {
-                const productId = this.dataset.productId;
-                if (!confirm('确定要删除该产品吗？')) return;
-                try {
-                    const { error } = await supabaseClient
-                        .from('products')
-                        .delete()
-                        .eq('id', productId);
-                    if (error) throw error;
-                    alert('产品已删除');
-                    await renderMainContent(currentUser);
-                } catch (err) {
-                    alert('删除失败: ' + err.message);
-                }
-            });
-        });
+                            if (!confirm('确定删除该产品？')) return;
+                            try {
+                                await deleteProductById(this.dataset.productId);
+                                alert('已删除');
+                                await renderMainContent(currentUser);
+                            } catch (err) { alert('删除失败: ' + err.message); }
+                        });
+                    });
                 } else {
                     // 客户下单
                     html = `
-                        <div class="fade-in">
-                            <h1 class="page-title">🛒 下单采购</h1>
-                            <p>选择产品输入数量，统一交期（≥28天）</p>
+                        <div>
+                            <h1 class="page-title">下单采购</h1>
+                            <p class="page-subtitle">选择产品输入数量，统一交期（≥28天）</p>
                             ${products.length === 0 ? '<div class="empty-state">暂无产品</div>' : `
                                 <form id="orderForm">
                                     <div class="order-table-wrap">
                                         <table>
-                                            <thead><tr><th>编码</th><th>简称</th><th>全称</th><th>数量</th></tr></thead>
+                                            <thead><tr><th>编码</th><th>简称</th><th>全称</th><th style="width:90px;">数量</th></tr></thead>
                                             <tbody>
                                                 ${products.map(p => `
                                                     <tr>
@@ -1363,8 +1217,14 @@ body {
                                         </table>
                                     </div>
                                     <div class="order-extra-fields">
-                                        <div><label>交期</label><input type="date" id="deliveryDate" value="${getMinDeliveryDate()}" min="${getMinDeliveryDate()}" /></div>
-                                        <div><label>备注</label><input type="text" id="orderNote" placeholder="特殊要求" /></div>
+                                        <div class="field-group">
+                                            <label>交期（≥28天）</label>
+                                            <input type="date" id="deliveryDate" value="${getMinDeliveryDate()}" min="${getMinDeliveryDate()}" />
+                                        </div>
+                                        <div class="field-group" style="flex:2;">
+                                            <label>备注</label>
+                                            <input type="text" id="orderNote" placeholder="特殊要求" />
+                                        </div>
                                     </div>
                                     <button type="submit" class="btn btn-primary">提交订单</button>
                                 </form>
@@ -1380,10 +1240,72 @@ body {
                     }
                 }
                 return;
+            } else if (currentNav === 'stockplans' && isSupplier) {
+                // ----- 备料计划页面（表格形式，类似下单） -----
+                const plans = await getStockPlans(user.company);
+                const planMap = {};
+                plans.forEach(p => { planMap[p.product_code] = p.quantity; });
+
+                html = `
+                    <div>
+                        <h1 class="page-title">备料计划</h1>
+                        <p class="page-subtitle">为每个产品设置备料数量，客户下单时将自动匹配消耗</p>
+                        <form id="stockPlanForm">
+                            <div class="table-wrapper stock-plan-table">
+                                <div class="table-header">
+                                    <h3>产品备料清单</h3>
+                                    <button type="submit" class="btn btn-primary btn-sm">保存备料</button>
+                                </div>
+                                ${products.length === 0 ? '<div class="empty-state">暂无产品，请先导入产品</div>' : `
+                                    <table>
+                                        <thead><tr>
+                                            <th>物料编码</th>
+                                            <th>简称</th>
+                                            <th>全称</th>
+                                            <th style="width:120px;">备料数量</th>
+                                        </tr></thead>
+                                        <tbody>
+                                            ${products.map(p => `
+                                                <tr>
+                                                    <td>${p.code}</td>
+                                                    <td>${p.short_name}</td>
+                                                    <td>${p.full_name}</td>
+                                                    <td>
+                                                        <input type="number" class="stock-qty-input" data-code="${p.code}" value="${planMap[p.code] || 0}" min="0" step="1" />
+                                                    </td>
+                                                </tr>
+                                            `).join('')}
+                                        </tbody>
+                                    </table>
+                                `}
+                            </div>
+                        </form>
+                    </div>
+                `;
+                mainContent.innerHTML = html;
+
+                // 提交表单保存
+                document.getElementById('stockPlanForm')?.addEventListener('submit', async function(e) {
+                    e.preventDefault();
+                    const inputs = document.querySelectorAll('.stock-qty-input');
+                    const planMap = {};
+                    inputs.forEach(input => {
+                        const code = input.dataset.code;
+                        const qty = parseInt(input.value) || 0;
+                        planMap[code] = qty;
+                    });
+                    try {
+                        await batchUpdateStockPlans(user.company, planMap);
+                        alert('备料计划已更新');
+                        await renderMainContent(user);
+                    } catch (err) {
+                        alert('保存失败: ' + err.message);
+                    }
+                });
+                return;
             }
 
             mainContent.innerHTML = html;
-            // 绑定明细按钮（总览页）
             document.querySelectorAll('.view-detail-btn').forEach(btn => {
                 btn.addEventListener('click', function() {
                     const order = orders.find(o => o.id === this.dataset.orderid);
@@ -1392,8 +1314,139 @@ body {
             });
         }
 
+        // 订单表格渲染
+        function renderOrderTable(orders, isSupplier) {
+            let html = `
+                <div>
+                    <h1 class="page-title">${isSupplier ? '订单管理' : '我的订单'}</h1>
+                    <p class="page-subtitle">${isSupplier ? '可同意/拒绝/删除' : '查看订单，待确认可编辑'}</p>
+                    <div class="table-wrapper">
+                        <div class="table-header">
+                            <h3>${isSupplier ? '全部订单' : '我的采购订单'}</h3>
+                            ${isSupplier ? `<button class="btn btn-primary btn-sm" id="exportOrdersBtn">导出</button>` : ''}
+                        </div>
+                        ${orders.length === 0 ? '<div class="empty-state">暂无订单</div>' : `
+                            <table>
+                                <thead><tr>
+                                    <th>订单号</th><th>${isSupplier ? '客户' : '供应商'}</th>
+                                    <th>产品项数</th><th>总数量</th><th>交期</th><th>状态</th><th>反馈</th><th>日期</th><th>操作</th>
+                                </tr></thead>
+                                <tbody>
+                                ${orders.map(o => {
+                                    const total = o.items ? o.items.reduce((s,i) => s+i.quantity, 0) : 0;
+                                    const canEdit = !isSupplier && o.status === '待确认';
+                                    return `<tr>
+                                        <td>${o.id}</td>
+                                        <td>${isSupplier ? o.customer : o.supplier}</td>
+                                        <td>${o.items ? o.items.length : 0}</td>
+                                        <td>${total}</td>
+                                        <td>${o.delivery_date || '-'}</td>
+                                        <td><span class="badge ${getStatusBadge(o.status)}">${o.status}</span></td>
+                                        <td>${o.response_note || '-'}</td>
+                                        <td>${o.order_date || '-'}</td>
+                                        <td>
+                                            <button class="btn btn-outline btn-sm view-detail-btn" data-orderid="${o.id}">查看</button>
+                                            ${isSupplier && o.status === '待确认' ? `
+                                                <button class="btn btn-success btn-sm respond-btn" data-orderid="${o.id}" data-action="agree">同意</button>
+                                                <button class="btn btn-danger btn-sm respond-btn" data-orderid="${o.id}" data-action="reject">拒绝</button>
+                                            ` : ''}
+                                            ${canEdit ? `<button class="btn btn-primary btn-sm edit-order-btn" data-orderid="${o.id}">编辑</button>` : ''}
+                                            ${isSupplier ? `
+                                                <button class="btn btn-outline btn-sm delete-order-btn" data-orderid="${o.id}" style="color:#b91c1c;border-color:#b91c1c;">删除</button>
+                                            ` : ''}
+                                        </td>
+                                    </tr>`;
+                                }).join('')}
+                                </tbody>
+                            </table>
+                        `}
+                    </div>
+                </div>
+            `;
+            mainContent.innerHTML = html;
+
+            const exportBtn = document.getElementById('exportOrdersBtn');
+            if (exportBtn) exportBtn.addEventListener('click', () => exportOrders(orders));
+
+            document.querySelectorAll('.view-detail-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const order = orders.find(o => o.id === this.dataset.orderid);
+                    if (order) showOrderDetail(order);
+                });
+            });
+
+            document.querySelectorAll('.respond-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    openResponseModal(this.dataset.orderid, this.dataset.action);
+                });
+            });
+
+            document.querySelectorAll('.edit-order-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const order = orders.find(o => o.id === this.dataset.orderid);
+                    if (order) openEditOrderModal(order);
+                });
+            });
+
+            document.querySelectorAll('.delete-order-btn').forEach(btn => {
+                btn.addEventListener('click', async function() {
+                    const orderId = this.dataset.orderid;
+                    if (!confirm(`确定删除订单 ${orderId} 吗？`)) return;
+                    try {
+                        await supabaseClient.from('orders').delete().eq('id', orderId);
+                        alert('已删除');
+                        const freshOrders = await getOrders();
+                        const actual = freshOrders.filter(o => !o.note.includes('[预测订单]'));
+                        const userOrders = actual.filter(o =>
+                            currentUser.role === 'supplier' ? o.supplier === currentUser.company : o.customer ===
+                            currentUser.company
+                        );
+                        renderOrderTable(userOrders, currentUser.role === 'supplier');
+                        await renderSidebar(currentUser);
+                    } catch (err) { alert('删除失败: ' + err.message); }
+                });
+            });
+        }
+
         // ============================================================
-        // 导出订单
+        // 其他辅助函数
+        // ============================================================
+        function getStatusBadge(status) {
+            const map = {
+                '待确认': 'badge-warning',
+                '已同意': 'badge-success',
+                '已拒绝': 'badge-danger',
+                '已完成': 'badge-success',
+                '配送中': 'badge-info',
+                '待审核': 'badge-warning',
+                '待付款': 'badge-danger'
+            };
+            return map[status] || 'badge-secondary';
+        }
+
+        function getMinDeliveryDate() {
+            const d = new Date();
+            d.setDate(d.getDate() + 28);
+            return d.toISOString().slice(0, 10);
+        }
+
+        async function markOrderRead(orderId) {
+            await supabaseClient.from('orders').update({ read: true }).eq('id', orderId);
+        }
+
+        async function getUnreadCount(supplier) {
+            const { count, error } = await supabaseClient
+                .from('orders')
+                .select('id', { count: 'exact', head: true })
+                .eq('supplier', supplier)
+                .eq('status', '待确认')
+                .eq('read', false);
+            if (error) return 0;
+            return count || 0;
+        }
+
+        // ============================================================
+        // 导出、上传、提交等（同前）
         // ============================================================
         async function exportOrders(orders) {
             if (!orders || orders.length === 0) { alert('无订单可导出'); return; }
@@ -1424,9 +1477,6 @@ body {
             link.click();
         }
 
-        // ============================================================
-        // 上传Excel
-        // ============================================================
         async function handleFileUpload(e) {
             const file = e.target.files[0];
             if (!file) return;
@@ -1436,8 +1486,6 @@ body {
                     const workbook = XLSX.read(ev.target.result, { type: 'array' });
                     const sheet = workbook.Sheets[workbook.SheetNames[0]];
                     const json = XLSX.utils.sheet_to_json(sheet, { header: 1 });
-                    console.log('📄 原始JSON:', json);  // ✅ 打印原始数据
-                    
                     let products = [];
                     let start = 0;
                     if (json.length > 0 && json[0].some(c => /编码|简称|全称/i.test(c))) start = 1;
@@ -1450,28 +1498,22 @@ body {
                         if (!code || !shortName || !fullName) continue;
                         products.push({ code, shortName, fullName });
                     }
-                    console.log('📦 解析出的产品:', products);  // ✅ 打印解析结果
-
                     if (products.length === 0) { alert('未解析到有效数据'); return; }
                     const map = new Map();
                     products.forEach(p => map.set(p.code, p));
                     const unique = Array.from(map.values());
                     await replaceProductsForSupplier(currentUser.company, unique);
-                    console.log('✅ 保存成功');
-                    
                     alert(`导入 ${unique.length} 个产品`);
                     await renderMainContent(currentUser);
                     document.getElementById('fileInput').value = '';
                 } catch (err) {
+                    console.error(err);
                     alert('解析失败: ' + err.message);
                 }
             };
             reader.readAsArrayBuffer(file);
         }
 
-        // ============================================================
-        // 客户下单
-        // ============================================================
         async function submitOrder(products) {
             const items = [];
             document.querySelectorAll('.qty-input').forEach(input => {
@@ -1494,12 +1536,14 @@ body {
             const supplier = products[0].supplier;
             const customer = currentUser.company;
             try {
-                const newOrder = await addOrder(items, delivery, note, customer, supplier);
-                if (newOrder) {
-                    alert(`订单 ${newOrder.id} 已提交`);
+                const generated = await addOrder(items, delivery, note, customer, supplier);
+                if (generated && generated.length > 0) {
+                    alert(`已生成 ${generated.length} 个订单（含备料匹配）`);
                     currentNav = 'orders';
                     await renderSidebar(currentUser);
                     await renderMainContent(currentUser);
+                } else {
+                    alert('订单生成失败');
                 }
             } catch (err) {
                 alert('提交失败: ' + err.message);
@@ -1507,22 +1551,22 @@ body {
         }
 
         // ============================================================
-        // 查看订单明细
+        // 模态框（查看、响应、编辑）
         // ============================================================
         function showOrderDetail(order) {
             modalContainer.innerHTML = `
                 <div class="modal-overlay" id="detailModalOverlay">
                     <div class="modal">
-                        <h2>📄 订单明细</h2>
-                        <p><strong>${order.id}</strong> | 客户: ${order.customer} | 供应商: ${order.supplier}</p>
+                        <h2>订单明细</h2>
+                        <div class="modal-sub"><strong>${order.id}</strong> | ${order.customer} → ${order.supplier}</div>
                         <p>交期: ${order.delivery_date || '-'} | 状态: <span class="badge ${getStatusBadge(order.status)}">${order.status}</span></p>
                         ${order.response_note ? `<p>供应商反馈: ${order.response_note}</p>` : ''}
-                        ${order.note ? `<p>客户备注: ${order.note}</p>` : ''}
+                        ${order.note ? `<p>备注: ${order.note}</p>` : ''}
                         <table>
-                            <thead><tr><th>编码</th><th>简称</th><th>全称</th><th>数量</th></tr></thead>
+                            <thead><tr><th>编码</th><th>简称</th><th>全称</th><th style="text-align:right;">数量</th></tr></thead>
                             <tbody>
                                 ${order.items ? order.items.map(item => `
-                                    <tr><td>${item.productCode||''}</td><td>${item.productShort||''}</td><td>${item.productFull||''}</td><td>${item.quantity}</td></tr>
+                                    <tr><td>${item.productCode||''}</td><td>${item.productShort||''}</td><td>${item.productFull||''}</td><td style="text-align:right;">${item.quantity}</td></tr>
                                 `).join('') : '<tr><td colspan="4">无明细</td></tr>'}
                             </tbody>
                         </table>
@@ -1536,14 +1580,12 @@ body {
             });
         }
 
-        // ============================================================
-        // 供应商反馈模态框
-        // ============================================================
         function openResponseModal(orderId, action) {
             modalContainer.innerHTML = `
                 <div class="modal-overlay" id="responseModalOverlay">
                     <div class="modal">
                         <h2>${action === 'agree' ? '同意' : '拒绝'}订单</h2>
+                        <div class="modal-sub">订单号: ${orderId}</div>
                         <div class="form-group">
                             <label>备注</label>
                             <textarea id="responseNote" rows="3"></textarea>
@@ -1560,43 +1602,42 @@ body {
                 const note = document.getElementById('responseNote').value.trim();
                 const status = action === 'agree' ? '已同意' : '已拒绝';
                 try {
-                    await respondOrder(orderId, status, note);
+                    await supabaseClient
+                        .from('orders')
+                        .update({ status, response_note: note || '' })
+                        .eq('id', orderId)
+                        .eq('status', '待确认');
                     alert(`订单已${status}`);
                     modalContainer.innerHTML = '';
                     await renderSidebar(currentUser);
                     await renderMainContent(currentUser);
-                } catch (err) {
-                    alert('操作失败: ' + err.message);
-                }
+                } catch (err) { alert('操作失败: ' + err.message); }
             });
             document.getElementById('responseModalOverlay').addEventListener('click', function(e) {
                 if (e.target === this) modalContainer.innerHTML = '';
             });
         }
 
-        // ============================================================
-        // 客户编辑订单（修改数量）
-        // ============================================================
         function openEditOrderModal(order) {
             let items = order.items.map(item => ({ ...item }));
             const modalHtml = `
                 <div class="modal-overlay" id="editModalOverlay">
                     <div class="modal" style="max-width:700px;">
-                        <h2>✏️ 编辑订单 ${order.id}</h2>
-                        <p>修改产品数量（型号不可改），保存后更新</p>
+                        <h2>编辑订单 ${order.id}</h2>
+                        <p style="color:#64748b;margin-bottom:12px;">修改产品数量</p>
                         <table>
-                            <thead><tr><th>编码</th><th>产品名称</th><th>数量</th></tr></thead>
+                            <thead><tr><th>编码</th><th>产品名称</th><th style="width:100px;">数量</th></tr></thead>
                             <tbody id="editItemsBody">
                                 ${items.map((item, idx) => `
                                     <tr>
                                         <td>${item.productCode}</td>
                                         <td>${item.productFull || item.productShort}</td>
-                                        <td><input type="number" class="edit-qty" data-index="${idx}" value="${item.quantity}" min="0" step="1" /></td>
+                                        <td><input type="number" class="edit-qty" data-index="${idx}" value="${item.quantity}" min="0" step="1" style="width:70px;padding:4px 8px;border:1px solid #d1d5db;border-radius:4px;" /></td>
                                     </tr>
                                 `).join('')}
                             </tbody>
                         </table>
-                        <div class="form-group">
+                        <div class="form-group" style="margin-top:14px;">
                             <label>交期</label>
                             <input type="date" id="editDeliveryDate" value="${order.delivery_date || ''}" min="${getMinDeliveryDate()}" />
                         </div>
@@ -1606,7 +1647,7 @@ body {
                         </div>
                         <div class="form-actions">
                             <button class="btn btn-outline" id="cancelEditBtn">取消</button>
-                            <button class="btn btn-primary" id="saveEditBtn">保存修改</button>
+                            <button class="btn btn-primary" id="saveEditBtn">保存</button>
                         </div>
                     </div>
                 </div>
@@ -1629,24 +1670,22 @@ body {
                         });
                     }
                 });
-                if (newItems.length === 0) {
-                    alert('至少保留一种产品数量大于0');
-                    return;
-                }
+                if (newItems.length === 0) { alert('至少保留一种产品'); return; }
                 const delivery = document.getElementById('editDeliveryDate').value;
                 if (!delivery) { alert('请选择交期'); return; }
                 const diff = Math.ceil((new Date(delivery) - new Date()) / (1000 * 60 * 60 * 24));
                 if (diff < 28) { alert('交期需≥28天'); return; }
                 const note = document.getElementById('editNote').value.trim();
                 try {
-                    await updateOrder(order.id, newItems, delivery, note);
+                    await supabaseClient
+                        .from('orders')
+                        .update({ items: newItems, delivery_date: delivery, note: note || '' })
+                        .eq('id', order.id);
                     alert('订单已更新');
                     modalContainer.innerHTML = '';
                     await renderSidebar(currentUser);
                     await renderMainContent(currentUser);
-                } catch (err) {
-                    alert('更新失败: ' + err.message);
-                }
+                } catch (err) { alert('更新失败: ' + err.message); }
             });
 
             document.getElementById('cancelEditBtn').addEventListener('click', () => modalContainer.innerHTML = '');
@@ -1662,7 +1701,7 @@ body {
             loginError.textContent = '';
             const user = USERS.find(u => u.username === username && u.password === password);
             if (!user) {
-                loginError.textContent = '❌ 账号或密码错误';
+                loginError.textContent = '账号或密码错误';
                 return;
             }
             currentUser = user;
@@ -1700,22 +1739,13 @@ body {
             const username = usernameInput.value.trim();
             const password = passwordInput.value.trim();
             if (!username || !password) {
-                loginError.textContent = '⚠️ 请输入账号和密码';
+                loginError.textContent = '请输入账号和密码';
                 return;
             }
             handleLogin(username, password);
         });
 
         logoutBtn.addEventListener('click', handleLogout);
-
-        // 测试账号点击只填充，不自动登录
-        document.querySelectorAll('.account-item').forEach(item => {
-            item.addEventListener('click', function() {
-                usernameInput.value = this.dataset.username;
-                passwordInput.value = this.dataset.password;
-                loginError.textContent = '';
-            });
-        });
 
         // ============================================================
         // 启动
@@ -1724,7 +1754,7 @@ body {
         dashboardPage.classList.add('hidden');
         usernameInput.value = 'supplier1';
         passwordInput.value = '123456';
-        console.log('✅ 系统已启动，Supabase 客户端已创建');
+        console.log('系统已启动（备料计划表格化）');
     </script>
 </body>
 </html>
