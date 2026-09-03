@@ -1188,77 +1188,106 @@ body {
                 `;
             } else if (currentNav === 'orders') {
                 // 订单管理表格
-                html = `
-                    <div class="fade-in">
-                        <h1 class="page-title">📦 ${isSupplier ? '订单管理' : '我的订单'}</h1>
-                        <p class="page-subtitle">${isSupplier ? '可同意/拒绝，支持导出' : '查看订单，待确认可编辑'}</p>
-                        <div class="table-wrapper">
-                            <div class="table-header">
-                                <h3>${isSupplier ? '全部订单' : '我的采购订单'}</h3>
-                                ${isSupplier ? `<button class="btn btn-primary btn-sm" id="exportOrdersBtn">📥 导出</button>` : ''}
-                            </div>
-                            ${orders.length === 0 ? '<div class="empty-state">暂无订单</div>' : `
-                                <table>
-                                    <thead><tr>
-                                        <th>订单号</th><th>${isSupplier ? '客户' : '供应商'}</th>
-                                        <th>产品项数</th><th>总数量</th><th>交期</th><th>状态</th><th>反馈</th><th>日期</th><th>操作</th>
-                                    </tr></thead>
-                                    <tbody>
-                                    ${orders.map(o => {
-                                        const total = o.items ? o.items.reduce((s,i) => s+i.quantity, 0) : 0;
-                                        const canEdit = !isSupplier && o.status === '待确认';
-                                        return `<tr>
-                                            <td>${o.id}</td>
-                                            <td>${isSupplier ? o.customer : o.supplier}</td>
-                                            <td>${o.items ? o.items.length : 0}</td>
-                                            <td>${total}</td>
-                                            <td>${o.delivery_date || '-'}</td>
-                                            <td><span class="badge ${getStatusBadge(o.status)}">${o.status}</span></td>
-                                            <td>${o.response_note || '-'}</td>
-                                            <td>${o.order_date || '-'}</td>
-                                            <td>
-                                                <button class="btn btn-outline btn-sm view-detail-btn" data-orderid="${o.id}">明细</button>
-                                                ${isSupplier && o.status === '待确认' ? `
-                                                    <button class="btn btn-success btn-sm respond-btn" data-orderid="${o.id}" data-action="agree">同意</button>
-                                                    <button class="btn btn-danger btn-sm respond-btn" data-orderid="${o.id}" data-action="reject">拒绝</button>
-                                                ` : ''}
-                                                ${canEdit ? `<button class="btn btn-primary btn-sm edit-order-btn" data-orderid="${o.id}">编辑</button>` : ''}
-                                            </td>
-                                        </tr>`;
-                                    }).join('')}
-                                    </tbody>
-                                </table>
-                            `}
-                        </div>
-                    </div>
-                `;
-                mainContent.innerHTML = html;
-                // 绑定导出
-                const exportBtn = document.getElementById('exportOrdersBtn');
-                if (exportBtn) exportBtn.addEventListener('click', () => exportOrders(orders));
-                // 查看明细
-                document.querySelectorAll('.view-detail-btn').forEach(btn => {
-                    btn.addEventListener('click', function() {
-                        const order = orders.find(o => o.id === this.dataset.orderid);
-                        if (order) showOrderDetail(order);
-                    });
-                });
-                // 供应商响应
-                document.querySelectorAll('.respond-btn').forEach(btn => {
-                    btn.addEventListener('click', function() {
-                        const orderId = this.dataset.orderid;
-                        const action = this.dataset.action;
-                        openResponseModal(orderId, action);
-                    });
-                });
-                // 客户编辑
-                document.querySelectorAll('.edit-order-btn').forEach(btn => {
-                    btn.addEventListener('click', function() {
-                        const orderId = this.dataset.orderid;
-                        const order = orders.find(o => o.id === orderId);
-                        if (order) openEditOrderModal(order);
-                    });
-                });
+            function renderOrderTable(orders, isSupplier) {
+    let html = `
+        <div class="fade-in">
+            <h1 class="page-title">📦 ${isSupplier ? '订单管理' : '我的订单'}</h1>
+            <p class="page-subtitle">${isSupplier ? '可同意/拒绝/删除' : '查看订单，待确认可编辑'}</p>
+            <div class="table-wrapper">
+                <div class="table-header">
+                    <h3>${isSupplier ? '全部订单' : '我的采购订单'}</h3>
+                    ${isSupplier ? `<button class="btn btn-primary btn-sm" id="exportOrdersBtn">📥 导出</button>` : ''}
+                </div>
+                ${orders.length === 0 ? '<div class="empty-state">暂无订单</div>' : `
+                    <table>
+                        <thead><tr>
+                            <th>订单号</th><th>${isSupplier ? '客户' : '供应商'}</th>
+                            <th>产品项数</th><th>总数量</th><th>交期</th><th>状态</th><th>反馈</th><th>日期</th><th>操作</th>
+                        </tr></thead>
+                        <tbody>
+                        ${orders.map(o => {
+                            const total = o.items ? o.items.reduce((s,i) => s+i.quantity, 0) : 0;
+                            const canEdit = !isSupplier && o.status === '待确认';
+                            return `<tr>
+                                <td>${o.id}</td>
+                                <td>${isSupplier ? o.customer : o.supplier}</td>
+                                <td>${o.items ? o.items.length : 0}</td>
+                                <td>${total}</td>
+                                <td>${o.delivery_date || '-'}</td>
+                                <td><span class="badge ${getStatusBadge(o.status)}">${o.status}</span></td>
+                                <td>${o.response_note || '-'}</td>
+                                <td>${o.order_date || '-'}</td>
+                                <td>
+                                    <button class="btn btn-outline btn-sm view-detail-btn" data-orderid="${o.id}">查看</button>
+                                    ${isSupplier && o.status === '待确认' ? `
+                                        <button class="btn btn-success btn-sm respond-btn" data-orderid="${o.id}" data-action="agree">同意</button>
+                                        <button class="btn btn-danger btn-sm respond-btn" data-orderid="${o.id}" data-action="reject">拒绝</button>
+                                    ` : ''}
+                                    ${canEdit ? `<button class="btn btn-primary btn-sm edit-order-btn" data-orderid="${o.id}">编辑</button>` : ''}
+                                    ${isSupplier ? `
+                                        <button class="btn btn-outline btn-sm delete-order-btn" data-orderid="${o.id}" style="color:#b91c1c;border-color:#b91c1c;">删除</button>
+                                    ` : ''}
+                                </td>
+                            </tr>`;
+                        }).join('')}
+                        </tbody>
+                    </table>
+                `}
+            </div>
+        </div>
+    `;
+    mainContent.innerHTML = html;
+
+    // --- 事件绑定（原有） ---
+    const exportBtn = document.getElementById('exportOrdersBtn');
+    if (exportBtn) exportBtn.addEventListener('click', () => exportOrders(orders));
+
+    document.querySelectorAll('.view-detail-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const order = orders.find(o => o.id === this.dataset.orderid);
+            if (order) showOrderDetail(order);
+        });
+    });
+
+    document.querySelectorAll('.respond-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            openResponseModal(this.dataset.orderid, this.dataset.action);
+        });
+    });
+
+    document.querySelectorAll('.edit-order-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const order = orders.find(o => o.id === this.dataset.orderid);
+            if (order) openEditOrderModal(order);
+        });
+    });
+
+    // --- 新增：删除订单事件 ---
+    document.querySelectorAll('.delete-order-btn').forEach(btn => {
+        btn.addEventListener('click', async function() {
+            const orderId = this.dataset.orderid;
+            if (!confirm(`确定要删除订单 ${orderId} 吗？此操作不可撤销！`)) return;
+            try {
+                const { error } = await supabaseClient
+                    .from('orders')
+                    .delete()
+                    .eq('id', orderId);
+                if (error) throw error;
+                alert('订单已删除');
+                // 刷新订单列表
+                const freshOrders = await getOrders();
+                const userOrders = freshOrders.filter(o => 
+                    currentUser.role === 'supplier' ? o.supplier === currentUser.company : o.customer === currentUser.company
+                );
+                renderOrderTable(userOrders, currentUser.role === 'supplier');
+                await renderSidebar(currentUser);
+            } catch (err) {
+                alert('删除失败: ' + err.message);
+            }
+        });
+    });
+}
+                
                 return;
             } else if (currentNav === 'products') {
                 // 产品管理或下单采购
